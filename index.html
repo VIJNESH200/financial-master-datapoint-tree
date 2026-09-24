@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Master Datapoint Tree</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1>Financial Master Datapoint Tree</h1>
+    </header>
+
+    <main class="app-main" id="tree-root">
+      <div class="selectors-container">
+        <!-- Financial Statement Selector -->
+        <div class="selector-group">
+          <div class="selector-label">FINANCIAL STATEMENT</div>
+          <div class="toggle-group" id="statement-toggles" role="tablist" aria-label="Financial Statement">
+            <button type="button" class="toggle-btn active" data-target="balanceSheet" role="tab" aria-selected="true">Balance Sheet</button>
+            <button type="button" class="toggle-btn" data-target="incomeStatement" role="tab" aria-selected="false">Income Statement</button>
+            <button type="button" class="toggle-btn" data-target="cashFlow" role="tab" aria-selected="false">Cash Flow Statement</button>
+          </div>
+        </div>
+
+        <!-- Industry Selector -->
+        <div class="selector-group">
+          <div class="selector-label">INDUSTRY</div>
+          <div class="toggle-group" id="industry-toggles" role="tablist" aria-label="Industry">
+            <button type="button" class="toggle-btn active" data-target="gind" role="tab" aria-selected="true">GIND</button>
+            <button type="button" class="toggle-btn" data-target="bank" role="tab" aria-selected="false">Bank</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tree Controls: Expand All / Collapse All -->
+      <div class="tree-controls">
+        <button type="button" class="action-btn" id="expand-all-btn">Expand All</button>
+        <button type="button" class="action-btn" id="collapse-all-btn">Collapse All</button>
+      </div>
+
+      <!-- Single Tree Display for Selected Statement + Industry Combination -->
+      <div id="tree-container" class="tree-display" role="region" aria-label="Datapoint Hierarchy"></div>
+
+      <!-- Supplementary Items Section -->
+      <div id="supplementary-container" class="supplementary-section" role="region" aria-label="Supplementary Items"></div>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
