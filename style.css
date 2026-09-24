@@ -32,41 +32,16 @@ body {
   margin: 0 auto;
 }
 
-.app-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-  padding: 14px 16px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-}
-
-.app-header h1 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 650;
-  color: #0f172a;
-  letter-spacing: -0.01em;
-}
-
-.app-subtitle {
-  margin: 2px 0 0;
-  font-size: 12.5px;
-  color: var(--muted);
-}
-
 .app-main {
   overflow-x: auto;
 }
 
+/* Single compact toolbar row: selectors, then search, then tree controls (left aligned) */
 .toolbar {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: flex-start;
+  gap: 12px 16px;
   flex-wrap: wrap;
   margin-bottom: 12px;
   padding: 12px 14px;
@@ -173,9 +148,8 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1 1 240px;
-  max-width: 360px;
-  margin-left: auto;
+  flex: 0 1 320px;
+  min-width: 220px;
 }
 
 .search-box {
@@ -814,8 +788,6 @@ mark {
   }
 
   .search-row {
-    margin-left: 0;
-    max-width: none;
     flex: 1 1 100%;
   }
 }
