@@ -5,6 +5,7 @@ const financialData = {
     balanceSheet: [
       {
         name: "Assets",
+        datapoint: "Total_Assets",
         isSide: "assets",
         children: [
           {
@@ -22,12 +23,17 @@ const financialData = {
             datapoint: "Non_Current_Assets",
             children: [
               { name: "Property, Plant & Equipment", datapoint: "Property_Plant_Equipment" },
-              { name: "Intangible Assets", datapoint: "Intangible_Assets" },
-              { name: "Goodwill", datapoint: "Goodwill" },
+              {
+                name: "Intangible Assets",
+                datapoint: "Intangible_Assets",
+                children: [
+                  { name: "Goodwill", datapoint: "Goodwill" },
+                  { name: "Other Intangible Assets", datapoint: "Other_Intangible_Assets" }
+                ]
+              },
               { name: "Other Non-Current Assets", datapoint: "Other_Non_Current_Assets" }
             ]
-          },
-          { name: "Total Assets", datapoint: "Total_Assets" }
+          }
         ]
       },
       {
@@ -37,6 +43,7 @@ const financialData = {
         children: [
           {
             name: "Liabilities",
+            datapoint: "Total_Liabilities",
             children: [
               {
                 name: "Current Liabilities",
@@ -55,17 +62,16 @@ const financialData = {
                   { name: "Deferred Tax Liabilities", datapoint: "Deferred_Tax_Liabilities" },
                   { name: "Other Non-Current Liabilities", datapoint: "Other_Non_Current_Liabilities" }
                 ]
-              },
-              { name: "Total Liabilities", datapoint: "Total_Liabilities" }
+              }
             ]
           },
           {
             name: "Equity",
+            datapoint: "Total_Equity",
             children: [
               { name: "Share Capital", datapoint: "Share_Capital" },
               { name: "Retained Earnings", datapoint: "Retained_Earnings" },
-              { name: "Other Equity", datapoint: "Other_Equity" },
-              { name: "Total Equity", datapoint: "Total_Equity" }
+              { name: "Other Equity", datapoint: "Other_Equity" }
             ]
           }
         ]
@@ -157,6 +163,7 @@ const financialData = {
     balanceSheet: [
       {
         name: "Assets",
+        datapoint: "Bank_Total_Assets",
         isSide: "assets",
         children: [
           { name: "Cash & Balances with Central Banks", datapoint: "Cash_Balances_Central_Banks" },
@@ -165,8 +172,7 @@ const financialData = {
           { name: "Investment Securities", datapoint: "Investment_Securities" },
           { name: "Derivative Financial Assets", datapoint: "Derivative_Financial_Assets" },
           { name: "Property and Equipment", datapoint: "Bank_Property_Equipment" },
-          { name: "Other Bank Assets", datapoint: "Other_Bank_Assets" },
-          { name: "Total Assets", datapoint: "Bank_Total_Assets" }
+          { name: "Other Bank Assets", datapoint: "Other_Bank_Assets" }
         ]
       },
       {
@@ -176,23 +182,23 @@ const financialData = {
         children: [
           {
             name: "Liabilities",
+            datapoint: "Bank_Total_Liabilities",
             children: [
               { name: "Deposits from Banks", datapoint: "Deposits_From_Banks" },
               { name: "Customer Accounts & Deposits", datapoint: "Customer_Deposits" },
               { name: "Debt Securities in Issue", datapoint: "Debt_Securities_Issued" },
               { name: "Derivative Financial Liabilities", datapoint: "Derivative_Financial_Liabilities" },
               { name: "Subordinated Debt", datapoint: "Subordinated_Debt" },
-              { name: "Other Bank Liabilities", datapoint: "Other_Bank_Liabilities" },
-              { name: "Total Liabilities", datapoint: "Bank_Total_Liabilities" }
+              { name: "Other Bank Liabilities", datapoint: "Other_Bank_Liabilities" }
             ]
           },
           {
             name: "Equity",
+            datapoint: "Bank_Total_Equity",
             children: [
               { name: "Share Capital", datapoint: "Bank_Share_Capital" },
               { name: "Retained Earnings", datapoint: "Bank_Retained_Earnings" },
-              { name: "Reserves & Other Equity", datapoint: "Bank_Reserves" },
-              { name: "Total Equity", datapoint: "Bank_Total_Equity" }
+              { name: "Reserves & Other Equity", datapoint: "Bank_Reserves" }
             ]
           }
         ]
