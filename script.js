@@ -116,35 +116,35 @@ const financialData = {
     ],
     cashFlow: [
       {
-        name: "Operating Activities",
+        name: "Cash Flow From Operations",
+        datapoint: "Cash_Flow_From_Operations",
         children: [
           { name: "Net Income", datapoint: "Net_Income" },
           { name: "Depreciation & Amortization", datapoint: "Depreciation_And_Amortization" },
           { name: "Changes In Working Capital", datapoint: "Changes_In_Working_Capital" },
-          { name: "Other Operating Adjustments", datapoint: "Other_Operating_Adjustments" },
-          { name: "Cash Flow From Operations", datapoint: "Cash_Flow_From_Operations" }
+          { name: "Other Operating Adjustments", datapoint: "Other_Operating_Adjustments" }
         ]
       },
       {
-        name: "Investing Activities",
+        name: "Cash Flow From Investing",
+        datapoint: "Cash_Flow_From_Investing",
         children: [
           { name: "Capital Expenditure", datapoint: "Capital_Expenditure" },
           { name: "Acquisitions", datapoint: "Acquisitions" },
           { name: "Investments", datapoint: "Investments" },
-          { name: "Other Investing Activities", datapoint: "Other_Investing_Activities" },
-          { name: "Cash Flow From Investing", datapoint: "Cash_Flow_From_Investing" }
+          { name: "Other Investing Activities", datapoint: "Other_Investing_Activities" }
         ]
       },
       {
-        name: "Financing Activities",
+        name: "Cash Flow From Financing",
+        datapoint: "Cash_Flow_From_Financing",
         children: [
           { name: "Debt Issuance", datapoint: "Debt_Issuance" },
           { name: "Debt Repayment", datapoint: "Debt_Repayment" },
           { name: "Share Issuance", datapoint: "Share_Issuance" },
           { name: "Share Buybacks", datapoint: "Share_Buybacks" },
           { name: "Dividends", datapoint: "Dividends" },
-          { name: "Other Financing Activities", datapoint: "Other_Financing_Activities" },
-          { name: "Cash Flow From Financing", datapoint: "Cash_Flow_From_Financing" }
+          { name: "Other Financing Activities", datapoint: "Other_Financing_Activities" }
         ]
       },
       { name: "Net Change In Cash", datapoint: "Net_Change_In_Cash" },
@@ -152,6 +152,7 @@ const financialData = {
       { name: "Cash & Cash Equivalents At End Of Period", datapoint: "Cash_And_Cash_Equivalents_At_End" }
     ]
   },
+
   bank: {
     balanceSheet: [
       {
@@ -198,18 +199,9 @@ const financialData = {
       }
     ],
     incomeStatement: [
-      {
-        name: "Interest Income",
-        datapoint: "Interest_Income"
-      },
-      {
-        name: "Interest Expense",
-        datapoint: "Bank_Interest_Expense"
-      },
-      {
-        name: "Net Interest Income",
-        datapoint: "Net_Interest_Income"
-      },
+      { name: "Interest Income", datapoint: "Interest_Income" },
+      { name: "Interest Expense", datapoint: "Bank_Interest_Expense" },
+      { name: "Net Interest Income", datapoint: "Net_Interest_Income" },
       {
         name: "Non-Interest Income",
         datapoint: "Non_Interest_Income",
@@ -242,31 +234,31 @@ const financialData = {
     ],
     cashFlow: [
       {
-        name: "Operating Activities",
+        name: "Cash Flow From Operations",
+        datapoint: "Cash_Flow_From_Operations",
         children: [
           { name: "Operating Profit Before Tax", datapoint: "Bank_CF_Operating_Profit" },
           { name: "Adjustments for Non-Cash Items", datapoint: "Bank_CF_Non_Cash_Adjustments" },
           { name: "Change in Loans & Advances", datapoint: "Bank_CF_Change_In_Loans" },
-          { name: "Change in Customer Deposits", datapoint: "Bank_CF_Change_In_Deposits" },
-          { name: "Cash Flow From Operations", datapoint: "Cash_Flow_From_Operations" }
+          { name: "Change in Customer Deposits", datapoint: "Bank_CF_Change_In_Deposits" }
         ]
       },
       {
-        name: "Investing Activities",
+        name: "Cash Flow From Investing",
+        datapoint: "Cash_Flow_From_Investing",
         children: [
           { name: "Purchase of Investment Securities", datapoint: "Bank_CF_Investment_Securities_Purchase" },
           { name: "Proceeds from Investment Securities", datapoint: "Bank_CF_Investment_Securities_Proceeds" },
-          { name: "Capital Expenditure on Fixed Assets", datapoint: "Bank_CF_Capex" },
-          { name: "Cash Flow From Investing", datapoint: "Cash_Flow_From_Investing" }
+          { name: "Capital Expenditure on Fixed Assets", datapoint: "Bank_CF_Capex" }
         ]
       },
       {
-        name: "Financing Activities",
+        name: "Cash Flow From Financing",
+        datapoint: "Cash_Flow_From_Financing",
         children: [
           { name: "Issuance of Subordinated Debt", datapoint: "Bank_CF_Subordinated_Debt_Issued" },
           { name: "Repayment of Subordinated Debt", datapoint: "Bank_CF_Subordinated_Debt_Repaid" },
-          { name: "Dividends Paid", datapoint: "Bank_CF_Dividends_Paid" },
-          { name: "Cash Flow From Financing", datapoint: "Cash_Flow_From_Financing" }
+          { name: "Dividends Paid", datapoint: "Bank_CF_Dividends_Paid" }
         ]
       },
       { name: "Net Change In Cash", datapoint: "Net_Change_In_Cash" },
@@ -274,6 +266,7 @@ const financialData = {
       { name: "Cash & Cash Equivalents At End Of Period", datapoint: "Cash_And_Cash_Equivalents_At_End" }
     ]
   },
+
   supplementaryItems: [
     { name: "Earnings Per Share", datapoint: "EPS" },
     { name: "Diluted Earnings Per Share", datapoint: "Diluted_EPS" },
@@ -290,9 +283,6 @@ const financialData = {
 let currentStatement = "balanceSheet";
 let currentIndustry = "gind";
 
-/**
- * Safely find an element by ID in both browser and mock environments.
- */
 function getElement(id) {
   if (typeof document !== "undefined") {
     if (typeof document.getElementById === "function") {
@@ -307,9 +297,6 @@ function getElement(id) {
   return null;
 }
 
-/**
- * Safely find multiple elements by selector in both browser and mock environments.
- */
 function getElements(selector) {
   if (typeof document !== "undefined") {
     if (typeof document.querySelectorAll === "function") {
@@ -343,9 +330,6 @@ function getElements(selector) {
   return [];
 }
 
-/**
- * Safely clears all children from an element in both DOM and mock environments.
- */
 function clearElement(element) {
   if (!element) return;
   if (typeof element.replaceChildren === "function") {
@@ -364,16 +348,6 @@ function clearElement(element) {
   }
 }
 
-/**
- * Recursive JavaScript function to render the datapoint tree.
- * Creates nested lists and wires up expand/collapse toggle behavior.
- * Handles nodes with `datapoint` code or `children`.
- * Supports balance sheet visual connector structure (Assets vs Total Liabilities & Equity).
- *
- * @param {Array|Object} items - Array of nodes or single node
- * @param {boolean} isBalanceSheetRoot - Whether this is the top level of a balance sheet
- * @returns {HTMLElement} - Rendered UL element
- */
 function renderTree(items, isBalanceSheetRoot = false) {
   const ul = document.createElement("ul");
   ul.className = "tree-branch";
@@ -387,19 +361,6 @@ function renderTree(items, isBalanceSheetRoot = false) {
   }
 
   list.forEach(item => {
-    // Backwards-compatibility check if node has isSideGroup
-    if (item.isSideGroup) {
-      const groupWrapper = document.createElement("li");
-      groupWrapper.className = "tree-item bs-side bs-side-liabilities-equity";
-
-      const subUl = renderTree(item.children, false);
-      subUl.classList.add("bs-sub-branch");
-
-      groupWrapper.appendChild(subUl);
-      ul.appendChild(groupWrapper);
-      return;
-    }
-
     const li = document.createElement("li");
     li.className = "tree-item";
 
@@ -416,7 +377,6 @@ function renderTree(items, isBalanceSheetRoot = false) {
     row.className = "tree-row " + (hasChildren ? "branch-row" : "leaf-row");
 
     if (hasChildren) {
-      // Toggle button (+ / −)
       const toggle = document.createElement("button");
       toggle.type = "button";
       toggle.className = "tree-toggle";
@@ -431,43 +391,29 @@ function renderTree(items, isBalanceSheetRoot = false) {
       row.appendChild(toggle);
       row.appendChild(label);
 
-      // Optional code badge if category itself has a datapoint code
       if (codeValue) {
         const code = document.createElement("span");
         code.className = "datapoint-code";
         code.textContent = `[${codeValue}]`;
-        code.addEventListener("click", (e) => {
-          e.stopPropagation();
-        });
+        code.addEventListener("click", (e) => e.stopPropagation());
         row.appendChild(code);
       }
 
       li.appendChild(row);
 
-      // Recursive call for nested children
       const childrenContainer = renderTree(item.children, false);
       childrenContainer.classList.add("collapsed");
       li.appendChild(childrenContainer);
 
-      // Expand / Collapse click handler
       row.addEventListener("click", () => {
         const isCollapsed = childrenContainer.classList.contains("collapsed");
-        if (isCollapsed) {
-          childrenContainer.classList.remove("collapsed");
-          toggle.textContent = "−";
-          toggle.setAttribute("aria-expanded", "true");
-          toggle.setAttribute("aria-label", `Collapse ${item.name}`);
-          row.classList.add("expanded");
-        } else {
-          childrenContainer.classList.add("collapsed");
-          toggle.textContent = "+";
-          toggle.setAttribute("aria-expanded", "false");
-          toggle.setAttribute("aria-label", `Expand ${item.name}`);
-          row.classList.remove("expanded");
-        }
+        childrenContainer.classList.toggle("collapsed");
+        toggle.textContent = isCollapsed ? "−" : "+";
+        toggle.setAttribute("aria-expanded", isCollapsed ? "true" : "false");
+        toggle.setAttribute("aria-label", `${isCollapsed ? "Collapse" : "Expand"} ${item.name}`);
+        row.classList.toggle("expanded", isCollapsed);
       });
     } else {
-      // Datapoint leaf node
       const spacer = document.createElement("span");
       spacer.className = "tree-spacer";
 
@@ -494,9 +440,6 @@ function renderTree(items, isBalanceSheetRoot = false) {
   return ul;
 }
 
-/**
- * Expand all expandable nodes in the currently selected statement tree and supplementary items.
- */
 function expandAll() {
   const container = getElement("tree-container") || getElement("statement-tree");
   const suppContainer = getElement("supplementary-container");
@@ -505,7 +448,6 @@ function expandAll() {
   if (suppContainer) rootContainers.push(suppContainer);
 
   rootContainers.forEach(root => {
-    // Find all tree-item elements that have a branch-row and a nested tree-branch
     const branchItems = root.querySelectorAll ? root.querySelectorAll(".tree-item") : [];
     branchItems.forEach(item => {
       const toggle = item.querySelector ? item.querySelector(".tree-toggle") : null;
@@ -524,9 +466,6 @@ function expandAll() {
   });
 }
 
-/**
- * Collapse all expandable nodes in the currently selected statement tree and supplementary items.
- */
 function collapseAll() {
   const container = getElement("tree-container") || getElement("statement-tree");
   const suppContainer = getElement("supplementary-container");
@@ -553,14 +492,10 @@ function collapseAll() {
   });
 }
 
-/**
- * Renders the Supplementary Items section as an expandable parent tree item.
- */
 function renderSupplementaryItems(container) {
   if (!container || !financialData.supplementaryItems) return;
   clearElement(container);
 
-  // Wrap items in an expandable tree parent node
   const suppTreeData = [
     {
       name: "Supplementary Items",
@@ -571,18 +506,12 @@ function renderSupplementaryItems(container) {
   const suppTree = renderTree(suppTreeData, false);
   suppTree.classList.add("supplementary-tree");
 
-  // To ensure querySelectorAll(".supplementary-row") finds the 8 leaf rows:
   const leafRows = suppTree.querySelectorAll ? Array.from(suppTree.querySelectorAll(".leaf-row")) : [];
-  leafRows.forEach(row => {
-    row.classList.add("supplementary-row");
-  });
+  leafRows.forEach(row => row.classList.add("supplementary-row"));
 
   container.appendChild(suppTree);
 }
 
-/**
- * Updates the tree display based on the currently selected Statement and Industry.
- */
 function updateTreeDisplay() {
   const container = getElement("tree-container") || getElement("statement-tree");
   if (!container) return;
@@ -599,17 +528,10 @@ function updateTreeDisplay() {
   const tree = renderTree(statementData, isBalanceSheet);
   container.appendChild(tree);
 
-  // Update supplementary items display
   const suppContainer = getElement("supplementary-container");
-  if (suppContainer) {
-    renderSupplementaryItems(suppContainer);
-  }
+  if (suppContainer) renderSupplementaryItems(suppContainer);
 }
 
-/**
- * Switch the active Financial Statement.
- * @param {string} key - "balanceSheet" | "incomeStatement" | "cashFlow"
- */
 function selectStatement(key, render = true) {
   currentStatement = key;
 
@@ -625,16 +547,9 @@ function selectStatement(key, render = true) {
     }
   });
 
-  if (render) {
-    updateTreeDisplay();
-  }
+  if (render) updateTreeDisplay();
 }
 
-/**
- * Switch the active Industry.
- * @param {string} key - "gind" | "bank"
- * @param {boolean} [render=true] - Whether to re-render display
- */
 function selectIndustry(key, render = true) {
   currentIndustry = key;
 
@@ -650,21 +565,15 @@ function selectIndustry(key, render = true) {
     }
   });
 
-  if (render) {
-    updateTreeDisplay();
-  }
+  if (render) updateTreeDisplay();
 }
 
-/**
- * Dynamically builds the taxonomy toggle UI if missing from the container.
- */
 function buildTaxonomyUI(treeRoot) {
   clearElement(treeRoot);
 
   const selectorsContainer = document.createElement("div");
   selectorsContainer.className = "selectors-container";
 
-  // Financial Statement Selector
   const stmtGroup = document.createElement("div");
   stmtGroup.className = "selector-group";
 
@@ -685,7 +594,7 @@ function buildTaxonomyUI(treeRoot) {
     { key: "cashFlow", label: "Cash Flow Statement" }
   ];
 
-  stmtOptions.forEach((opt, idx) => {
+  stmtOptions.forEach(opt => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "toggle-btn" + (opt.key === currentStatement ? " active" : "");
@@ -694,15 +603,13 @@ function buildTaxonomyUI(treeRoot) {
     btn.setAttribute("aria-selected", opt.key === currentStatement ? "true" : "false");
     btn.textContent = opt.label;
     btn._hasToggleListener = true;
-    btn.addEventListener("click", () => {
-      selectStatement(opt.key);
-    });
+    btn.addEventListener("click", () => selectStatement(opt.key));
     stmtToggles.appendChild(btn);
   });
+
   stmtGroup.appendChild(stmtToggles);
   selectorsContainer.appendChild(stmtGroup);
 
-  // Industry Selector
   const indGroup = document.createElement("div");
   indGroup.className = "selector-group";
 
@@ -722,7 +629,7 @@ function buildTaxonomyUI(treeRoot) {
     { key: "bank", label: "Bank" }
   ];
 
-  indOptions.forEach((opt, idx) => {
+  indOptions.forEach(opt => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "toggle-btn" + (opt.key === currentIndustry ? " active" : "");
@@ -731,17 +638,14 @@ function buildTaxonomyUI(treeRoot) {
     btn.setAttribute("aria-selected", opt.key === currentIndustry ? "true" : "false");
     btn.textContent = opt.label;
     btn._hasToggleListener = true;
-    btn.addEventListener("click", () => {
-      selectIndustry(opt.key);
-    });
+    btn.addEventListener("click", () => selectIndustry(opt.key));
     indToggles.appendChild(btn);
   });
+
   indGroup.appendChild(indToggles);
   selectorsContainer.appendChild(indGroup);
-
   treeRoot.appendChild(selectorsContainer);
 
-  // Tree Controls: Expand All / Collapse All
   const controlsDiv = document.createElement("div");
   controlsDiv.className = "tree-controls";
 
@@ -765,7 +669,6 @@ function buildTaxonomyUI(treeRoot) {
 
   treeRoot.appendChild(controlsDiv);
 
-  // Tree Container
   const treeContainer = document.createElement("div");
   treeContainer.id = "tree-container";
   treeContainer.className = "tree-display";
@@ -773,7 +676,6 @@ function buildTaxonomyUI(treeRoot) {
   treeContainer.setAttribute("aria-label", "Datapoint Hierarchy");
   treeRoot.appendChild(treeContainer);
 
-  // Supplementary Container
   const suppContainer = document.createElement("div");
   suppContainer.id = "supplementary-container";
   suppContainer.className = "supplementary-section";
@@ -782,9 +684,6 @@ function buildTaxonomyUI(treeRoot) {
   treeRoot.appendChild(suppContainer);
 }
 
-/**
- * Initialize the Financial Master Datapoint Tree UI and event listeners.
- */
 function initTree() {
   let treeContainer = getElement("tree-container") || getElement("statement-tree");
 
@@ -796,7 +695,6 @@ function initTree() {
     }
   }
 
-  // Bind statement toggle listeners
   const statementBtns = getElements("#statement-toggles .toggle-btn");
   statementBtns.forEach(btn => {
     if (!btn._hasToggleListener) {
@@ -808,7 +706,6 @@ function initTree() {
     }
   });
 
-  // Bind industry toggle listeners
   const industryBtns = getElements("#industry-toggles .toggle-btn");
   industryBtns.forEach(btn => {
     if (!btn._hasToggleListener) {
@@ -820,7 +717,6 @@ function initTree() {
     }
   });
 
-  // Bind Expand All / Collapse All buttons if present in static HTML
   const expandBtn = getElement("expand-all-btn");
   if (expandBtn && !expandBtn._hasClickListener) {
     expandBtn._hasClickListener = true;
@@ -833,9 +729,6 @@ function initTree() {
     collapseBtn.addEventListener("click", collapseAll);
   }
 
-  // Initial state as per requirements:
-  // Financial Statement = Balance Sheet
-  // Industry = GIND
   selectIndustry("gind", false);
   selectStatement("balanceSheet", true);
 }
@@ -848,7 +741,6 @@ if (typeof document !== "undefined") {
   }
 }
 
-// Export for testing environments
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     financialData,
