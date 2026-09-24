@@ -13,7 +13,6 @@
         <h1>Financial Master Datapoint Tree</h1>
         <p class="app-subtitle">Explore financial datapoint taxonomy for GIND and Bank</p>
       </div>
-      <div class="header-hint" title="Use your browser find to search names or codes">Ctrl + F to search</div>
     </header>
 
     <main class="app-main" id="tree-root">
@@ -36,6 +35,15 @@
               <button type="button" class="toggle-btn" data-target="incomeStatement" role="tab" aria-selected="false">Income Statement</button>
               <button type="button" class="toggle-btn" data-target="cashFlow" role="tab" aria-selected="false">Cash Flow Statement</button>
             </div>
+          </div>
+        </div>
+
+        <!-- Search: matches datapoint names and datapoint codes in the current statement -->
+        <div class="search-row" role="search">
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="4.5"></circle><path d="M10.5 10.5 14 14"></path></svg>
+            <input type="text" id="tree-search" placeholder="Search datapoints or concepts..." autocomplete="off" spellcheck="false" aria-label="Search datapoints or concepts">
+            <button type="button" class="search-clear" id="search-clear" aria-label="Clear search" title="Clear search" hidden>×</button>
           </div>
         </div>
 
@@ -66,6 +74,10 @@
           </div>
           <button type="button" class="detail-code" id="detail-code" title="Click to copy">[ — ]</button>
           <div class="detail-copied" id="detail-copied" hidden>Copied</div>
+          <div class="detail-block detail-definition-block">
+            <div class="detail-label">Definition</div>
+            <p class="detail-definition-text" id="detail-definition">—</p>
+          </div>
           <dl class="detail-meta">
             <div><dt>Statement</dt><dd id="detail-statement">—</dd></div>
             <div><dt>Industry</dt><dd id="detail-industry">—</dd></div>

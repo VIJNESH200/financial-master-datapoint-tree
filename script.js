@@ -289,6 +289,8 @@ const financialData = {
 let currentStatement = "balanceSheet";
 let currentIndustry = "gind";
 let selectedNode = null;
+let searchText = "";
+let searchQuery = "";
 
 const STATEMENT_LABELS = {
   balanceSheet: "Balance Sheet",
@@ -299,6 +301,126 @@ const STATEMENT_LABELS = {
 const INDUSTRY_LABELS = {
   gind: "GIND",
   bank: "Bank"
+};
+
+// Concise analyst-grade definitions keyed by datapoint code (taxonomy unchanged).
+const DEFINITIONS = {
+  Total_Assets: "Total resources controlled by the company, equal to total liabilities plus equity.",
+  Current_Assets: "Assets expected to convert to cash or be used within one year.",
+  Cash_And_Cash_Equivalents: "Cash and highly liquid investments with original maturities of three months or less.",
+  Accounts_Receivable: "Amounts owed to the company by customers for goods or services already provided.",
+  Inventory: "Goods held for sale or used in production, not yet sold.",
+  Other_Current_Assets: "Other short-term assets not classified elsewhere.",
+  Non_Current_Assets: "Long-term assets not expected to convert to cash within one year.",
+  Property_Plant_Equipment: "Tangible long-lived assets such as land, buildings, and machinery.",
+  Intangible_Assets: "Non-physical long-term assets such as goodwill, patents, software, and brand rights.",
+  Goodwill: "Premium paid over fair value of net assets in an acquisition.",
+  Other_Intangible_Assets: "Intangible assets other than goodwill.",
+  Other_Non_Current_Assets: "Other long-term assets not classified elsewhere.",
+  Total_Liabilities_And_Equity: "Total claims on assets, equal to total liabilities plus total equity.",
+  Total_Liabilities: "Total amounts the company owes to creditors and other counterparties.",
+  Current_Liabilities: "Obligations due within one year.",
+  Accounts_Payable: "Amounts owed to suppliers for goods or services received.",
+  Short_Term_Debt: "Borrowings and debt due within one year.",
+  Other_Current_Liabilities: "Other short-term obligations not classified elsewhere.",
+  Non_Current_Liabilities: "Obligations due after more than one year.",
+  Long_Term_Debt: "Borrowings and debt due after more than one year.",
+  Deferred_Tax_Liabilities: "Taxes owed in future periods due to temporary timing differences.",
+  Other_Non_Current_Liabilities: "Other long-term obligations not classified elsewhere.",
+  Total_Equity: "Residual owners' claim on assets after deducting liabilities.",
+  Share_Capital: "Capital raised from shareholders through issued shares.",
+  Retained_Earnings: "Cumulative profits retained in the business after dividends.",
+  Other_Equity: "Other equity components such as reserves and other comprehensive income.",
+  Revenue: "Income generated from the company's ordinary business activities during the period.",
+  Product_Service_Revenue: "Revenue specifically attributable to products sold or services rendered.",
+  Other_Operating_Revenue: "Other revenue from ordinary operations not from core products or services.",
+  Cost_Of_Sales: "Total direct costs of goods sold and services delivered during the period.",
+  Cost_Of_Goods_Sold: "Direct costs attributable to producing the goods or services sold during the period.",
+  Other_Cost_Of_Sales: "Other direct costs of sales not captured in cost of goods sold.",
+  Gross_Profit: "Revenue minus cost of sales.",
+  Operating_Expenses: "Costs of running core operations, excluding cost of sales.",
+  Selling_General_Administrative: "Sales, marketing, and administrative overhead costs.",
+  Research_And_Development: "Spending on research and development of new products or processes.",
+  Other_Operating_Expenses: "Other operating costs not classified elsewhere.",
+  EBITDA: "Earnings before interest, taxes, depreciation and amortization.",
+  Depreciation_And_Amortization: "Non-cash charges spreading asset costs over their useful lives.",
+  EBIT: "Earnings before interest and taxes; operating profit including depreciation and amortization.",
+  Non_Operating_Income_Expense: "Net gains or losses from activities outside core operations.",
+  Interest_Income: "Interest earned on cash, loans, and investments during the period.",
+  Interest_Expense: "Cost of borrowings incurred during the period.",
+  Other_Non_Operating_Income_Expense: "Other non-operating gains or losses not classified elsewhere.",
+  Profit_Before_Tax: "Profit after all operating and non-operating items but before income tax.",
+  Income_Tax: "Tax expense on the period's profit, comprising current and deferred tax.",
+  Net_Profit: "Profit attributable to shareholders after all expenses and taxes.",
+  Net_Income: "Profit for the period, taken as the starting point of the operating cash flow reconciliation.",
+  Changes_In_Working_Capital: "Cash impact of changes in short-term operating assets and liabilities.",
+  Other_Operating_Adjustments: "Other non-cash and operating adjustments to reconcile cash from operations.",
+  Cash_Flow_From_Operations: "Net cash generated from core operating activities.",
+  Cash_Flow_From_Investing: "Net cash used in or generated from investing activities.",
+  Cash_Flow_From_Financing: "Net cash from financing activities such as debt and equity.",
+  Capital_Expenditure: "Cash spent on long-term physical assets.",
+  Acquisitions: "Cash spent acquiring other businesses or assets.",
+  Investments: "Cash paid for, or received from, purchases, sales and maturities of investments.",
+  Other_Investing_Activities: "Other investing cash flows not classified elsewhere.",
+  Debt_Issuance: "Cash received from issuing debt.",
+  Debt_Repayment: "Cash paid to repay debt.",
+  Share_Issuance: "Cash received from issuing shares.",
+  Share_Buybacks: "Cash spent repurchasing the company's own shares.",
+  Dividends: "Cash dividends paid to shareholders.",
+  Other_Financing_Activities: "Other financing cash flows not classified elsewhere.",
+  Net_Change_In_Cash: "Net increase or decrease in cash during the period.",
+  Cash_And_Cash_Equivalents_At_Beginning: "Cash balance at the start of the period.",
+  Cash_And_Cash_Equivalents_At_End: "Cash balance at the end of the period.",
+  Bank_Total_Assets: "Total resources controlled by the bank, equal to total liabilities plus equity.",
+  Cash_Balances_Central_Banks: "Cash and balances held with central banks.",
+  Loans_Advances_Banks: "Loans and advances to other banks and financial institutions.",
+  Loans_Advances_Customers: "Loans and advances to customers, the bank's core earning asset.",
+  Investment_Securities: "Securities held by the bank for liquidity and investment income.",
+  Derivative_Financial_Assets: "Positive fair value of the bank's derivative contracts.",
+  Bank_Property_Equipment: "The bank's tangible fixed assets such as branches and equipment.",
+  Other_Bank_Assets: "Other bank assets not classified elsewhere.",
+  Bank_Total_Liabilities_And_Equity: "Total claims on the bank's assets.",
+  Bank_Total_Liabilities: "Total amounts the bank owes to depositors, lenders, and counterparties.",
+  Deposits_From_Banks: "Funds the bank owes to other banks, a wholesale funding source.",
+  Customer_Deposits: "Deposits from customers, the bank's core funding source.",
+  Debt_Securities_Issued: "Bonds and notes issued by the bank to raise funding.",
+  Derivative_Financial_Liabilities: "Negative fair value of the bank's derivative contracts.",
+  Subordinated_Debt: "Lower-ranking debt that absorbs losses before senior creditors.",
+  Other_Bank_Liabilities: "Other bank obligations not classified elsewhere.",
+  Bank_Total_Equity: "Residual owners' claim on the bank after deducting liabilities.",
+  Bank_Share_Capital: "Capital raised from the bank's shareholders through issued shares.",
+  Bank_Retained_Earnings: "Cumulative bank profits retained after dividends.",
+  Bank_Reserves: "Reserves and other equity components of the bank.",
+  Bank_Interest_Expense: "Interest paid by the bank on deposits and borrowings.",
+  Net_Interest_Income: "Interest income minus interest expense; the bank's core earnings measure.",
+  Non_Interest_Income: "Bank income from fees, trading, and other non-interest sources.",
+  Net_Fee_Commission_Income: "Net income from fees and commissions for banking services.",
+  Trading_Fair_Value_Income: "Gains or losses from trading and fair-value instruments.",
+  Bank_Other_Operating_Income: "Other bank operating income not classified elsewhere.",
+  Credit_Loss_Expense: "Charge for expected and incurred losses on loans and credit exposures.",
+  Loan_Loss_Provisions: "Provisions set aside against probable loan losses.",
+  Credit_Impairment_Charges: "Charges for impairment of credit exposures and financial assets.",
+  Staff_Expenses: "Employee compensation and benefit costs of the bank.",
+  Administrative_Expenses: "Administrative and overhead costs of running the bank.",
+  Bank_Taxation: "Income tax expense of the bank for the period.",
+  Bank_CF_Operating_Profit: "Bank operating profit before tax as the cash flow starting point.",
+  Bank_CF_Non_Cash_Adjustments: "Non-cash adjustments to reconcile bank operating profit to cash.",
+  Bank_CF_Change_In_Loans: "Cash impact of changes in loans and advances.",
+  Bank_CF_Change_In_Deposits: "Cash impact of changes in customer deposits.",
+  Bank_CF_Investment_Securities_Purchase: "Cash spent purchasing investment securities.",
+  Bank_CF_Investment_Securities_Proceeds: "Cash received from sale or maturity of investment securities.",
+  Bank_CF_Capex: "Cash spent on the bank's fixed assets.",
+  Bank_CF_Subordinated_Debt_Issued: "Cash received from issuing subordinated debt.",
+  Bank_CF_Subordinated_Debt_Repaid: "Cash paid to repay subordinated debt.",
+  Bank_CF_Dividends_Paid: "Cash dividends paid by the bank to shareholders.",
+  EPS: "Net profit divided by weighted average shares outstanding.",
+  Diluted_EPS: "Net profit divided by shares including potential dilutive securities.",
+  DPS: "Dividend declared per ordinary share.",
+  Book_Value_Per_Share: "Total equity divided by shares outstanding.",
+  Tangible_Book_Value_Per_Share: "Tangible equity divided by shares outstanding.",
+  Weighted_Average_Shares_Outstanding: "Average shares outstanding during the period, adjusted for timing.",
+  Diluted_Weighted_Average_Shares_Outstanding: "Average shares including potential dilutive securities.",
+  Dividend_Payout: "Share of earnings distributed as dividends."
 };
 
 const COPY_ICON_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="5" width="8" height="8" rx="1.5"></rect><path d="M11 5V4a1.5 1.5 0 0 0-1.5-1.5H4A1.5 1.5 0 0 0 2.5 4v5.5A1.5 1.5 0 0 0 4 11h1"></path></svg>';
@@ -388,6 +510,8 @@ function openDetail(node, trail) {
   };
   getElement("detail-statement").textContent = STATEMENT_LABELS[currentStatement] || currentStatement;
   getElement("detail-industry").textContent = INDUSTRY_LABELS[currentIndustry] || currentIndustry;
+  const defText = DEFINITIONS[node.datapoint || node.code] || "Definition not available.";
+  getElement("detail-definition").textContent = defText;
   getElement("detail-path").textContent = trail.map(n => n.name).join(" → ");
 
   const block = getElement("detail-children-block");
@@ -420,7 +544,7 @@ function closeDetail() {
   document.querySelectorAll(".tree-row.selected").forEach(r => r.classList.remove("selected"));
 }
 
-function updateChrome(count) {
+function updateChrome(label) {
   const crumb = getElement("breadcrumb");
   if (crumb) {
     const ind = INDUSTRY_LABELS[currentIndustry] || currentIndustry;
@@ -430,7 +554,7 @@ function updateChrome(count) {
       : ind + " › " + stmt;
   }
   const hint = getElement("tree-count");
-  if (hint && typeof count === "number") hint.textContent = count + " datapoints";
+  if (hint && typeof label !== "undefined") hint.textContent = String(label);
 }
 
 function getElement(id) {
@@ -498,6 +622,34 @@ function clearElement(element) {
   }
 }
 
+function matchesSearch(item) {
+  if (!searchQuery) return true;
+  const q = searchQuery.toLowerCase();
+  const code = (item.datapoint || item.code || "").toLowerCase();
+  const name = (item.name || "").toLowerCase();
+  return name.includes(q) || code.includes(q);
+}
+
+function subtreeHasMatch(item) {
+  if (matchesSearch(item)) return true;
+  return Array.isArray(item.children) && item.children.some(subtreeHasMatch);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+function highlightText(text) {
+  if (!searchQuery) return escapeHtml(text);
+  const lower = String(text).toLowerCase();
+  const q = searchQuery.toLowerCase();
+  const idx = lower.indexOf(q);
+  if (idx < 0) return escapeHtml(text);
+  return escapeHtml(text.slice(0, idx)) + "<mark>" + escapeHtml(text.slice(idx, idx + q.length)) + "</mark>" + escapeHtml(text.slice(idx + q.length));
+}
+
 function renderTree(items, isBalanceSheetRoot = false, parentTrail) {
   const ul = document.createElement("ul");
   ul.className = "tree-branch";
@@ -511,6 +663,7 @@ function renderTree(items, isBalanceSheetRoot = false, parentTrail) {
   }
 
   list.forEach(item => {
+    if (searchQuery && !subtreeHasMatch(item)) return;
     const li = document.createElement("li");
     li.className = "tree-item";
 
@@ -522,6 +675,9 @@ function renderTree(items, isBalanceSheetRoot = false, parentTrail) {
 
     const hasChildren = Array.isArray(item.children) && item.children.length > 0;
     const codeValue = item.datapoint || item.code;
+    // While searching, every rendered branch stays expanded so matches and their
+    // required parent path are visible. Clearing the search restores the default collapsed state.
+    const isSearching = Boolean(searchQuery);
 
     const row = document.createElement("div");
     row.className = "tree-row " + (hasChildren ? "branch-row" : "leaf-row");
@@ -532,13 +688,14 @@ function renderTree(items, isBalanceSheetRoot = false, parentTrail) {
       const toggle = document.createElement("button");
       toggle.type = "button";
       toggle.className = "tree-toggle";
-      toggle.setAttribute("aria-expanded", "false");
-      toggle.setAttribute("aria-label", `Expand ${item.name}`);
-      toggle.textContent = "+";
+      toggle.setAttribute("aria-expanded", isSearching ? "true" : "false");
+      toggle.setAttribute("aria-label", `${isSearching ? "Collapse" : "Expand"} ${item.name}`);
+      toggle.textContent = isSearching ? "−" : "+";
+      if (isSearching) row.classList.add("expanded");
 
       const label = document.createElement("span");
       label.className = "branch-label";
-      label.textContent = item.name;
+      label.innerHTML = highlightText(item.name);
 
       row.appendChild(toggle);
       row.appendChild(label);
@@ -546,7 +703,7 @@ function renderTree(items, isBalanceSheetRoot = false, parentTrail) {
       if (codeValue) {
         const code = document.createElement("span");
         code.className = "datapoint-code";
-        code.textContent = `[${codeValue}]`;
+        code.innerHTML = `[${highlightText(codeValue)}]`;
         code.addEventListener("click", (e) => e.stopPropagation());
         row.appendChild(code);
         addCopyButton(row, codeValue);
@@ -555,7 +712,8 @@ function renderTree(items, isBalanceSheetRoot = false, parentTrail) {
       li.appendChild(row);
 
       const childrenContainer = renderTree(item.children, false, trail);
-      childrenContainer.classList.add("collapsed");
+      // Default state is collapsed; search keeps branches open so matches stay reachable.
+      if (!searchQuery) childrenContainer.classList.add("collapsed");
       li.appendChild(childrenContainer);
 
       row.addEventListener("click", (e) => {
@@ -577,7 +735,7 @@ function renderTree(items, isBalanceSheetRoot = false, parentTrail) {
 
       const name = document.createElement("span");
       name.className = "datapoint-name";
-      name.textContent = item.name;
+      name.innerHTML = highlightText(item.name);
 
       row.appendChild(spacer);
       row.appendChild(name);
@@ -585,7 +743,7 @@ function renderTree(items, isBalanceSheetRoot = false, parentTrail) {
       if (codeValue) {
         const code = document.createElement("span");
         code.className = "datapoint-code";
-        code.textContent = `[${codeValue}]`;
+        code.innerHTML = `[${highlightText(codeValue)}]`;
         row.appendChild(code);
         addCopyButton(row, codeValue);
       }
@@ -675,6 +833,17 @@ function renderSupplementaryItems(container) {
   container.appendChild(suppTree);
 }
 
+function countMatches(nodes) {
+  let n = 0;
+  (function walk(list) {
+    list.forEach(item => {
+      if (matchesSearch(item)) n += 1;
+      if (item.children) walk(item.children);
+    });
+  })(nodes);
+  return n;
+}
+
 function updateTreeDisplay() {
   const container = getElement("tree-container") || getElement("statement-tree");
   if (!container) return;
@@ -692,17 +861,47 @@ function updateTreeDisplay() {
   const tree = renderTree(statementData, isBalanceSheet, []);
   container.appendChild(tree);
 
-  let count = 0;
-  (function countCodes(nodes) {
-    nodes.forEach(n => {
-      if (n.datapoint || n.code) count += 1;
-      if (n.children) countCodes(n.children);
-    });
-  })(statementData);
-  updateChrome(count);
+  let label;
+  if (searchQuery) {
+    label = countMatches(statementData) + " matches";
+  } else {
+    let count = 0;
+    (function countCodes(nodes) {
+      nodes.forEach(item => {
+        if (item.datapoint || item.code) count += 1;
+        if (item.children) countCodes(item.children);
+      });
+    })(statementData);
+    label = count + " datapoints";
+  }
+  updateChrome(label);
 
   const suppContainer = getElement("supplementary-container");
   if (suppContainer) renderSupplementaryItems(suppContainer);
+  syncSearchUI();
+}
+
+function syncSearchUI() {
+  const input = getElement("tree-search");
+  // Never rewrite the field while the user is typing: that would swallow trailing spaces.
+  if (input && document.activeElement !== input && input.value !== searchText) {
+    input.value = searchText;
+  }
+  const clearBtn = getElement("search-clear");
+  if (clearBtn) clearBtn.hidden = !searchQuery;
+}
+
+function setSearch(value) {
+  searchText = String(value == null ? "" : value);
+  searchQuery = searchText.trim();
+  updateTreeDisplay();
+}
+
+function clearSearch() {
+  const input = getElement("tree-search");
+  if (input) input.value = "";
+  setSearch("");
+  if (input) input.focus();
 }
 
 function selectStatement(key, render = true) {
@@ -908,6 +1107,24 @@ function initTree() {
     closeBtn.addEventListener("click", closeDetail);
   }
 
+  const searchInput = getElement("tree-search");
+  if (searchInput && !searchInput._hasSearchListener) {
+    searchInput._hasSearchListener = true;
+    searchInput.addEventListener("input", (e) => setSearch(e.target.value));
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && searchQuery) {
+        e.preventDefault();
+        clearSearch();
+      }
+    });
+  }
+
+  const clearBtn = getElement("search-clear");
+  if (clearBtn && !clearBtn._hasClickListener) {
+    clearBtn._hasClickListener = true;
+    clearBtn.addEventListener("click", clearSearch);
+  }
+
   selectIndustry("gind", false);
   selectStatement("balanceSheet", true);
 }
@@ -923,6 +1140,7 @@ if (typeof document !== "undefined") {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     financialData,
+    DEFINITIONS,
     renderTree,
     initTree,
     selectStatement,
@@ -932,6 +1150,10 @@ if (typeof module !== "undefined" && module.exports) {
     buildTaxonomyUI,
     expandAll,
     collapseAll,
+    setSearch,
+    clearSearch,
+    get searchQuery() { return searchQuery; },
+    get searchText() { return searchText; },
     get currentStatement() { return currentStatement; },
     set currentStatement(v) { currentStatement = v; },
     get currentIndustry() { return currentIndustry; },
