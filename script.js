@@ -288,6 +288,150 @@ const financialData = {
 // State variables tracking selected options
 let currentStatement = "balanceSheet";
 let currentIndustry = "gind";
+let selectedNode = null;
+
+const STATEMENT_LABELS = {
+  balanceSheet: "Balance Sheet",
+  incomeStatement: "Income Statement",
+  cashFlow: "Cash Flow Statement"
+};
+
+const INDUSTRY_LABELS = {
+  gind: "GIND",
+  bank: "Bank"
+};
+
+const COPY_ICON_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="5" width="8" height="8" rx="1.5"></rect><path d="M11 5V4a1.5 1.5 0 0 0-1.5-1.5H4A1.5 1.5 0 0 0 2.5 4v5.5A1.5 1.5 0 0 0 4 11h1"></path></svg>';
+
+function copyText(text, done) {
+  function fallback() {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      done(true);
+    } catch (e) {
+      done(false);
+    }
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => done(true), fallback);
+  } else {
+    fallback();
+  }
+}
+
+function showRowToast(row) {
+  const old = row.querySelector(".copy-toast");
+  if (old) old.remove();
+  const toast = document.createElement("span");
+  toast.className = "copy-toast";
+  toast.textContent = "Copied";
+  row.appendChild(toast);
+  setTimeout(() => toast.remove(), 1200);
+}
+
+function addCopyButton(row, code) {
+  if (!code || row.querySelector(".copy-btn")) return;
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "copy-btn";
+  btn.title = "Copy " + code;
+  btn.setAttribute("aria-label", "Copy datapoint code " + code);
+  btn.innerHTML = COPY_ICON_SVG;
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    copyText(code, (ok) => {
+      if (ok) showRowToast(row);
+    });
+  });
+  row.appendChild(btn);
+}
+
+function findPath(nodes, code, trail) {
+  for (const node of nodes) {
+    const nodeCode = node.datapoint || node.code;
+    const next = trail.concat([node]);
+    if (nodeCode && nodeCode === code) return next;
+    if (node.children) {
+      const hit = findPath(node.children, code, next);
+      if (hit) return hit;
+    }
+  }
+  return null;
+}
+
+function openDetail(node, trail) {
+  const panel = getElement("detail-panel");
+  if (!panel) return;
+  selectedNode = node.datapoint || node.code;
+  document.querySelectorAll(".tree-row.selected").forEach(r => r.classList.remove("selected"));
+  const row = document.querySelector('.tree-row[data-code="' + selectedNode + '"]');
+  if (row) row.classList.add("selected");
+
+  getElement("detail-name").textContent = node.name;
+  const codeBtn = getElement("detail-code");
+  codeBtn.textContent = "[" + (node.datapoint || node.code) + "]";
+  codeBtn.onclick = () => {
+    copyText(node.datapoint || node.code, (ok) => {
+      const el = getElement("detail-copied");
+      if (ok && el) {
+        el.hidden = false;
+        setTimeout(() => { el.hidden = true; }, 1200);
+      }
+    });
+  };
+  getElement("detail-statement").textContent = STATEMENT_LABELS[currentStatement] || currentStatement;
+  getElement("detail-industry").textContent = INDUSTRY_LABELS[currentIndustry] || currentIndustry;
+  getElement("detail-path").textContent = trail.map(n => n.name).join(" → ");
+
+  const block = getElement("detail-children-block");
+  const list = getElement("detail-children");
+  list.innerHTML = "";
+  if (node.children && node.children.length) {
+    block.hidden = false;
+    node.children.forEach(child => {
+      const li = document.createElement("li");
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = "→ " + child.name;
+      b.addEventListener("click", () => {
+        const full = findPath(financialData[currentIndustry][currentStatement], child.datapoint || child.code, [{ name: STATEMENT_LABELS[currentStatement] || currentStatement }]);
+        if (full) openDetail(child, full);
+      });
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+  } else {
+    block.hidden = true;
+  }
+  panel.hidden = false;
+}
+
+function closeDetail() {
+  const panel = getElement("detail-panel");
+  if (panel) panel.hidden = true;
+  selectedNode = null;
+  document.querySelectorAll(".tree-row.selected").forEach(r => r.classList.remove("selected"));
+}
+
+function updateChrome(count) {
+  const crumb = getElement("breadcrumb");
+  if (crumb) {
+    const ind = INDUSTRY_LABELS[currentIndustry] || currentIndustry;
+    const stmt = STATEMENT_LABELS[currentStatement] || currentStatement;
+    crumb.textContent = selectedNode
+      ? ind + " › " + stmt + " › " + selectedNode
+      : ind + " › " + stmt;
+  }
+  const hint = getElement("tree-count");
+  if (hint && typeof count === "number") hint.textContent = count + " datapoints";
+}
 
 function getElement(id) {
   if (typeof document !== "undefined") {
@@ -354,7 +498,7 @@ function clearElement(element) {
   }
 }
 
-function renderTree(items, isBalanceSheetRoot = false) {
+function renderTree(items, isBalanceSheetRoot = false, parentTrail) {
   const ul = document.createElement("ul");
   ul.className = "tree-branch";
 
@@ -381,6 +525,8 @@ function renderTree(items, isBalanceSheetRoot = false) {
 
     const row = document.createElement("div");
     row.className = "tree-row " + (hasChildren ? "branch-row" : "leaf-row");
+    if (codeValue) row.setAttribute("data-code", codeValue);
+    const trail = (parentTrail || []).concat([item]);
 
     if (hasChildren) {
       const toggle = document.createElement("button");
@@ -403,15 +549,21 @@ function renderTree(items, isBalanceSheetRoot = false) {
         code.textContent = `[${codeValue}]`;
         code.addEventListener("click", (e) => e.stopPropagation());
         row.appendChild(code);
+        addCopyButton(row, codeValue);
       }
 
       li.appendChild(row);
 
-      const childrenContainer = renderTree(item.children, false);
+      const childrenContainer = renderTree(item.children, false, trail);
       childrenContainer.classList.add("collapsed");
       li.appendChild(childrenContainer);
 
-      row.addEventListener("click", () => {
+      row.addEventListener("click", (e) => {
+        if (e.target.closest(".copy-btn")) return;
+        if (e.target.closest(".datapoint-code")) {
+          openDetail(item, [{ name: STATEMENT_LABELS[currentStatement] || currentStatement }].concat(trail));
+          return;
+        }
         const isCollapsed = childrenContainer.classList.contains("collapsed");
         childrenContainer.classList.toggle("collapsed");
         toggle.textContent = isCollapsed ? "−" : "+";
@@ -435,9 +587,14 @@ function renderTree(items, isBalanceSheetRoot = false) {
         code.className = "datapoint-code";
         code.textContent = `[${codeValue}]`;
         row.appendChild(code);
+        addCopyButton(row, codeValue);
       }
 
       li.appendChild(row);
+      row.addEventListener("click", (e) => {
+        if (e.target.closest(".copy-btn")) return;
+        openDetail(item, [{ name: STATEMENT_LABELS[currentStatement] || currentStatement }].concat(trail));
+      });
     }
 
     ul.appendChild(li);
@@ -528,11 +685,21 @@ function updateTreeDisplay() {
   const statementData = industryData[currentStatement];
   if (!statementData) return;
 
+  closeDetail();
   clearElement(container);
 
   const isBalanceSheet = currentStatement === "balanceSheet";
-  const tree = renderTree(statementData, isBalanceSheet);
+  const tree = renderTree(statementData, isBalanceSheet, []);
   container.appendChild(tree);
+
+  let count = 0;
+  (function countCodes(nodes) {
+    nodes.forEach(n => {
+      if (n.datapoint || n.code) count += 1;
+      if (n.children) countCodes(n.children);
+    });
+  })(statementData);
+  updateChrome(count);
 
   const suppContainer = getElement("supplementary-container");
   if (suppContainer) renderSupplementaryItems(suppContainer);
@@ -733,6 +900,12 @@ function initTree() {
   if (collapseBtn && !collapseBtn._hasClickListener) {
     collapseBtn._hasClickListener = true;
     collapseBtn.addEventListener("click", collapseAll);
+  }
+
+  const closeBtn = getElement("detail-close");
+  if (closeBtn && !closeBtn._hasClickListener) {
+    closeBtn._hasClickListener = true;
+    closeBtn.addEventListener("click", closeDetail);
   }
 
   selectIndustry("gind", false);

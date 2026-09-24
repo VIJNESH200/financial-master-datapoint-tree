@@ -9,44 +9,85 @@
 <body>
   <div class="app-container">
     <header class="app-header">
-      <h1>Financial Master Datapoint Tree</h1>
+      <div>
+        <h1>Financial Master Datapoint Tree</h1>
+        <p class="app-subtitle">Explore financial datapoint taxonomy for GIND and Bank</p>
+      </div>
+      <div class="header-hint" title="Use your browser find to search names or codes">Ctrl + F to search</div>
     </header>
 
     <main class="app-main" id="tree-root">
-      <div class="selectors-container">
-        <!-- Financial Statement Selector -->
-        <div class="selector-group">
-          <div class="selector-label">FINANCIAL STATEMENT</div>
-          <div class="toggle-group" id="statement-toggles" role="tablist" aria-label="Financial Statement">
-            <button type="button" class="toggle-btn active" data-target="balanceSheet" role="tab" aria-selected="true">Balance Sheet</button>
-            <button type="button" class="toggle-btn" data-target="incomeStatement" role="tab" aria-selected="false">Income Statement</button>
-            <button type="button" class="toggle-btn" data-target="cashFlow" role="tab" aria-selected="false">Cash Flow Statement</button>
+      <div class="toolbar">
+        <div class="selectors-container">
+          <!-- Industry Selector -->
+          <div class="selector-group">
+            <div class="selector-label">Industry</div>
+            <div class="toggle-group" id="industry-toggles" role="tablist" aria-label="Industry">
+              <button type="button" class="toggle-btn active" data-target="gind" role="tab" aria-selected="true">GIND</button>
+              <button type="button" class="toggle-btn" data-target="bank" role="tab" aria-selected="false">Bank</button>
+            </div>
+          </div>
+
+          <!-- Financial Statement Selector -->
+          <div class="selector-group">
+            <div class="selector-label">Financial Statement</div>
+            <div class="toggle-group" id="statement-toggles" role="tablist" aria-label="Financial Statement">
+              <button type="button" class="toggle-btn active" data-target="balanceSheet" role="tab" aria-selected="true">Balance Sheet</button>
+              <button type="button" class="toggle-btn" data-target="incomeStatement" role="tab" aria-selected="false">Income Statement</button>
+              <button type="button" class="toggle-btn" data-target="cashFlow" role="tab" aria-selected="false">Cash Flow Statement</button>
+            </div>
           </div>
         </div>
 
-        <!-- Industry Selector -->
-        <div class="selector-group">
-          <div class="selector-label">INDUSTRY</div>
-          <div class="toggle-group" id="industry-toggles" role="tablist" aria-label="Industry">
-            <button type="button" class="toggle-btn active" data-target="gind" role="tab" aria-selected="true">GIND</button>
-            <button type="button" class="toggle-btn" data-target="bank" role="tab" aria-selected="false">Bank</button>
-          </div>
+        <!-- Tree Controls: Expand All / Collapse All -->
+        <div class="tree-controls">
+          <button type="button" class="action-btn" id="expand-all-btn">Expand All</button>
+          <button type="button" class="action-btn" id="collapse-all-btn">Collapse All</button>
         </div>
       </div>
 
-      <!-- Tree Controls: Expand All / Collapse All -->
-      <div class="tree-controls">
-        <button type="button" class="action-btn" id="expand-all-btn">Expand All</button>
-        <button type="button" class="action-btn" id="collapse-all-btn">Collapse All</button>
+      <div class="content-grid">
+        <!-- Single Tree Display for Selected Statement + Industry Combination -->
+        <section class="tree-card">
+          <div id="tree-container" class="tree-display" role="region" aria-label="Datapoint Hierarchy"></div>
+
+          <!-- Supplementary Items Section -->
+          <div id="supplementary-container" class="supplementary-section" role="region" aria-label="Supplementary Items"></div>
+        </section>
+
+        <!-- Lightweight datapoint detail panel -->
+        <aside class="detail-panel" id="detail-panel" aria-label="Datapoint details" hidden>
+          <div class="detail-head">
+            <div>
+              <div class="detail-eyebrow">Datapoint</div>
+              <h2 class="detail-title" id="detail-name">—</h2>
+            </div>
+            <button type="button" class="detail-close" id="detail-close" aria-label="Close details">×</button>
+          </div>
+          <button type="button" class="detail-code" id="detail-code" title="Click to copy">[ — ]</button>
+          <div class="detail-copied" id="detail-copied" hidden>Copied</div>
+          <dl class="detail-meta">
+            <div><dt>Statement</dt><dd id="detail-statement">—</dd></div>
+            <div><dt>Industry</dt><dd id="detail-industry">—</dd></div>
+          </dl>
+          <div class="detail-block">
+            <div class="detail-label">Path</div>
+            <div class="detail-path" id="detail-path">—</div>
+          </div>
+          <div class="detail-block" id="detail-children-block" hidden>
+            <div class="detail-label">Direct children</div>
+            <ul class="detail-children" id="detail-children"></ul>
+          </div>
+        </aside>
       </div>
 
-      <!-- Single Tree Display for Selected Statement + Industry Combination -->
-      <div id="tree-container" class="tree-display" role="region" aria-label="Datapoint Hierarchy"></div>
-
-      <!-- Supplementary Items Section -->
-      <div id="supplementary-container" class="supplementary-section" role="region" aria-label="Supplementary Items"></div>
+      <footer class="app-footer">
+        <span class="breadcrumb" id="breadcrumb">GIND › Balance Sheet</span>
+        <span class="footer-hint" id="tree-count"></span>
+      </footer>
     </main>
   </div>
   <script src="script.js"></script>
 </body>
 </html>
+
