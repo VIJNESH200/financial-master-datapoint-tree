@@ -68,11 +68,23 @@ for (const industry of ["gind", "bank"]) {
   const assets = find(bs, "Assets");
   assert(assets, `${industry} BS must contain Assets`);
   assert(!assets.datapoint, `${industry} BS Assets is a structural heading and must not have a datapoint`);
-  assertExactOrder(
-    assets.children,
-    ["Current Assets", "Non-Current Assets", "Total Assets"],
-    `${industry} Assets`
-  );
+  if (industry === "gind") {
+    assertExactOrder(
+      assets.children,
+      ["Current Assets", "Non-Current Assets", "Total Assets"],
+      `${industry} Assets`
+    );
+    assertHasDatapoint(find(find(assets.children, "Current Assets").children, "Cash & Cash Equivalents") || find(assets.children, "Current Assets"));
+    assertHasDatapoint(find(find(assets.children, "Non-Current Assets").children, "Property, Plant & Equipment") || find(assets.children, "Non-Current Assets"));
+  } else {
+    // Bank uses bank-specific flat asset lines + Total Assets (existing bank codes kept).
+    assertExactOrder(
+      assets.children,
+      ["Cash & Balances with Central Banks", "Loans & Advances to Banks", "Loans & Advances to Customers", "Investment Securities", "Derivative Financial Assets", "Property and Equipment", "Other Bank Assets", "Total Assets"],
+      `${industry} Assets`
+    );
+    for (const leaf of assets.children) assertHasDatapoint(leaf, `Bank BS ${leaf.name}`);
+  }
 
   const totalAssets = find(assets.children, "Total Assets");
   assertHasDatapoint(totalAssets);
