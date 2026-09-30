@@ -1,289 +1,20 @@
-// Standardized Financial Master Datapoint Data Structure
-// Hierarchies organized by Industry -> Financial Statement
-const financialData = {
-  gind: {
-    balanceSheet: [
-      {
-        name: "Assets",
-        datapoint: "Total_Assets",
-        isSide: "assets",
-        children: [
-          {
-            name: "Current Assets",
-            datapoint: "Current_Assets",
-            children: [
-              { name: "Cash & Cash Equivalents", datapoint: "Cash_And_Cash_Equivalents" },
-              { name: "Accounts Receivable", datapoint: "Accounts_Receivable" },
-              { name: "Inventory", datapoint: "Inventory" },
-              { name: "Other Current Assets", datapoint: "Other_Current_Assets" }
-            ]
-          },
-          {
-            name: "Non-Current Assets",
-            datapoint: "Non_Current_Assets",
-            children: [
-              { name: "Property, Plant & Equipment", datapoint: "Property_Plant_Equipment" },
-              {
-                name: "Intangible Assets",
-                datapoint: "Intangible_Assets",
-                children: [
-                  { name: "Goodwill", datapoint: "Goodwill" },
-                  { name: "Other Intangible Assets", datapoint: "Other_Intangible_Assets" }
-                ]
-              },
-              { name: "Other Non-Current Assets", datapoint: "Other_Non_Current_Assets" }
-            ]
-          }
-        ]
-      },
-      {
-        name: "Total Liabilities & Equity",
-        isSide: "liabilitiesEquity",
-        datapoint: "Total_Liabilities_And_Equity",
-        children: [
-          {
-            name: "Liabilities",
-            datapoint: "Total_Liabilities",
-            children: [
-              {
-                name: "Current Liabilities",
-                datapoint: "Current_Liabilities",
-                children: [
-                  { name: "Accounts Payable", datapoint: "Accounts_Payable" },
-                  { name: "Short-Term Debt", datapoint: "Short_Term_Debt" },
-                  { name: "Other Current Liabilities", datapoint: "Other_Current_Liabilities" }
-                ]
-              },
-              {
-                name: "Non-Current Liabilities",
-                datapoint: "Non_Current_Liabilities",
-                children: [
-                  { name: "Long-Term Debt", datapoint: "Long_Term_Debt" },
-                  { name: "Deferred Tax Liabilities", datapoint: "Deferred_Tax_Liabilities" },
-                  { name: "Other Non-Current Liabilities", datapoint: "Other_Non_Current_Liabilities" }
-                ]
-              }
-            ]
-          },
-          {
-            name: "Equity",
-            datapoint: "Total_Equity",
-            children: [
-              { name: "Share Capital", datapoint: "Share_Capital" },
-              { name: "Retained Earnings", datapoint: "Retained_Earnings" },
-              { name: "Other Equity", datapoint: "Other_Equity" }
-            ]
-          }
-        ]
-      }
-    ],
-    incomeStatement: [
-      {
-        name: "Revenue",
-        datapoint: "Revenue",
-        children: [
-          { name: "Product / Service Revenue", datapoint: "Product_Service_Revenue" },
-          { name: "Other Operating Revenue", datapoint: "Other_Operating_Revenue" }
-        ]
-      },
-      {
-        name: "Cost of Sales",
-        datapoint: "Cost_Of_Sales",
-        children: [
-          { name: "Cost of Goods Sold", datapoint: "Cost_Of_Goods_Sold" },
-          { name: "Other Cost of Sales", datapoint: "Other_Cost_Of_Sales" }
-        ]
-      },
-      { name: "Gross Profit", datapoint: "Gross_Profit" },
-      {
-        name: "Operating Expenses",
-        datapoint: "Operating_Expenses",
-        children: [
-          { name: "Selling, General & Administrative", datapoint: "Selling_General_Administrative" },
-          { name: "Research & Development", datapoint: "Research_And_Development" },
-          { name: "Other Operating Expenses", datapoint: "Other_Operating_Expenses" }
-        ]
-      },
-      { name: "EBITDA", datapoint: "EBITDA" },
-      { name: "Depreciation & Amortization", datapoint: "Depreciation_And_Amortization" },
-      { name: "EBIT / Operating Profit", datapoint: "EBIT" },
-      {
-        name: "Non-Operating Income / Expense",
-        datapoint: "Non_Operating_Income_Expense",
-        children: [
-          { name: "Interest Income", datapoint: "Interest_Income" },
-          { name: "Interest Expense", datapoint: "Interest_Expense" },
-          { name: "Other Non-Operating Income / Expense", datapoint: "Other_Non_Operating_Income_Expense" }
-        ]
-      },
-      { name: "Profit Before Tax", datapoint: "Profit_Before_Tax" },
-      { name: "Tax", datapoint: "Income_Tax" },
-      { name: "Net Profit", datapoint: "Net_Profit" }
-    ],
-    cashFlow: [
-      {
-        name: "Cash Flow From Operations",
-        datapoint: "Cash_Flow_From_Operations",
-        children: [
-          { name: "Net Income", datapoint: "Net_Income" },
-          { name: "Depreciation & Amortization", datapoint: "Depreciation_And_Amortization" },
-          { name: "Changes In Working Capital", datapoint: "Changes_In_Working_Capital" },
-          { name: "Other Operating Adjustments", datapoint: "Other_Operating_Adjustments" }
-        ]
-      },
-      {
-        name: "Cash Flow From Investing",
-        datapoint: "Cash_Flow_From_Investing",
-        children: [
-          { name: "Capital Expenditure", datapoint: "Capital_Expenditure" },
-          { name: "Acquisitions", datapoint: "Acquisitions" },
-          { name: "Investments", datapoint: "Investments" },
-          { name: "Other Investing Activities", datapoint: "Other_Investing_Activities" }
-        ]
-      },
-      {
-        name: "Cash Flow From Financing",
-        datapoint: "Cash_Flow_From_Financing",
-        children: [
-          { name: "Debt Issuance", datapoint: "Debt_Issuance" },
-          { name: "Debt Repayment", datapoint: "Debt_Repayment" },
-          { name: "Share Issuance", datapoint: "Share_Issuance" },
-          { name: "Share Buybacks", datapoint: "Share_Buybacks" },
-          { name: "Dividends", datapoint: "Dividends" },
-          { name: "Other Financing Activities", datapoint: "Other_Financing_Activities" }
-        ]
-      },
-      { name: "Net Change In Cash", datapoint: "Net_Change_In_Cash" },
-      { name: "Cash & Cash Equivalents At Beginning Of Period", datapoint: "Cash_And_Cash_Equivalents_At_Beginning" },
-      { name: "Cash & Cash Equivalents At End Of Period", datapoint: "Cash_And_Cash_Equivalents_At_End" }
-    ]
-  },
+// script.js - HOW the application works.
+//
+// This file has NO data in it. It only contains the application logic:
+//   taxonomyData.js = WHAT financial items exist  (the `financialData` variable).
+//   definitions.js  = WHAT those items mean       (the `DEFINITIONS` variable).
+//   script.js       = HOW the app works           (this file).
+//   style.css       = HOW it looks.  index.html   = WHAT is on the page.
+//
+// Load order in index.html matters: taxonomyData.js and definitions.js
+// must load BEFORE this file, because the functions below read the
+// `financialData` and `DEFINITIONS` variables they define.
 
-  bank: {
-    balanceSheet: [
-      {
-        name: "Assets",
-        datapoint: "Bank_Total_Assets",
-        isSide: "assets",
-        children: [
-          { name: "Cash & Balances with Central Banks", datapoint: "Cash_Balances_Central_Banks" },
-          { name: "Loans & Advances to Banks", datapoint: "Loans_Advances_Banks" },
-          { name: "Loans & Advances to Customers", datapoint: "Loans_Advances_Customers" },
-          { name: "Investment Securities", datapoint: "Investment_Securities" },
-          { name: "Derivative Financial Assets", datapoint: "Derivative_Financial_Assets" },
-          { name: "Property and Equipment", datapoint: "Bank_Property_Equipment" },
-          { name: "Other Bank Assets", datapoint: "Other_Bank_Assets" }
-        ]
-      },
-      {
-        name: "Total Liabilities & Equity",
-        isSide: "liabilitiesEquity",
-        datapoint: "Bank_Total_Liabilities_And_Equity",
-        children: [
-          {
-            name: "Liabilities",
-            datapoint: "Bank_Total_Liabilities",
-            children: [
-              { name: "Deposits from Banks", datapoint: "Deposits_From_Banks" },
-              { name: "Customer Accounts & Deposits", datapoint: "Customer_Deposits" },
-              { name: "Debt Securities in Issue", datapoint: "Debt_Securities_Issued" },
-              { name: "Derivative Financial Liabilities", datapoint: "Derivative_Financial_Liabilities" },
-              { name: "Subordinated Debt", datapoint: "Subordinated_Debt" },
-              { name: "Other Bank Liabilities", datapoint: "Other_Bank_Liabilities" }
-            ]
-          },
-          {
-            name: "Equity",
-            datapoint: "Bank_Total_Equity",
-            children: [
-              { name: "Share Capital", datapoint: "Bank_Share_Capital" },
-              { name: "Retained Earnings", datapoint: "Bank_Retained_Earnings" },
-              { name: "Reserves & Other Equity", datapoint: "Bank_Reserves" }
-            ]
-          }
-        ]
-      }
-    ],
-    incomeStatement: [
-      { name: "Interest Income", datapoint: "Interest_Income" },
-      { name: "Interest Expense", datapoint: "Bank_Interest_Expense" },
-      { name: "Net Interest Income", datapoint: "Net_Interest_Income" },
-      {
-        name: "Non-Interest Income",
-        datapoint: "Non_Interest_Income",
-        children: [
-          { name: "Fees & Commissions", datapoint: "Net_Fee_Commission_Income" },
-          { name: "Trading Income", datapoint: "Trading_Fair_Value_Income" },
-          { name: "Other Non-Interest Income", datapoint: "Bank_Other_Operating_Income" }
-        ]
-      },
-      {
-        name: "Credit Loss Expense / Loan Loss Provisions",
-        datapoint: "Credit_Loss_Expense",
-        children: [
-          { name: "Loan Loss Provisions", datapoint: "Loan_Loss_Provisions" },
-          { name: "Impairment Charges", datapoint: "Credit_Impairment_Charges" }
-        ]
-      },
-      {
-        name: "Operating Expenses",
-        datapoint: "Operating_Expenses",
-        children: [
-          { name: "Staff Expenses", datapoint: "Staff_Expenses" },
-          { name: "Administrative Expenses", datapoint: "Administrative_Expenses" },
-          { name: "Other Operating Expenses", datapoint: "Other_Operating_Expenses" }
-        ]
-      },
-      { name: "Profit Before Tax", datapoint: "Profit_Before_Tax" },
-      { name: "Tax", datapoint: "Bank_Taxation" },
-      { name: "Net Profit", datapoint: "Net_Profit" }
-    ],
-    cashFlow: [
-      {
-        name: "Cash Flow From Operations",
-        datapoint: "Cash_Flow_From_Operations",
-        children: [
-          { name: "Operating Profit Before Tax", datapoint: "Bank_CF_Operating_Profit" },
-          { name: "Adjustments for Non-Cash Items", datapoint: "Bank_CF_Non_Cash_Adjustments" },
-          { name: "Change in Loans & Advances", datapoint: "Bank_CF_Change_In_Loans" },
-          { name: "Change in Customer Deposits", datapoint: "Bank_CF_Change_In_Deposits" }
-        ]
-      },
-      {
-        name: "Cash Flow From Investing",
-        datapoint: "Cash_Flow_From_Investing",
-        children: [
-          { name: "Purchase of Investment Securities", datapoint: "Bank_CF_Investment_Securities_Purchase" },
-          { name: "Proceeds from Investment Securities", datapoint: "Bank_CF_Investment_Securities_Proceeds" },
-          { name: "Capital Expenditure on Fixed Assets", datapoint: "Bank_CF_Capex" }
-        ]
-      },
-      {
-        name: "Cash Flow From Financing",
-        datapoint: "Cash_Flow_From_Financing",
-        children: [
-          { name: "Issuance of Subordinated Debt", datapoint: "Bank_CF_Subordinated_Debt_Issued" },
-          { name: "Repayment of Subordinated Debt", datapoint: "Bank_CF_Subordinated_Debt_Repaid" },
-          { name: "Dividends Paid", datapoint: "Bank_CF_Dividends_Paid" }
-        ]
-      },
-      { name: "Net Change In Cash", datapoint: "Net_Change_In_Cash" },
-      { name: "Cash & Cash Equivalents At Beginning Of Period", datapoint: "Cash_And_Cash_Equivalents_At_Beginning" },
-      { name: "Cash & Cash Equivalents At End Of Period", datapoint: "Cash_And_Cash_Equivalents_At_End" }
-    ]
-  },
 
-  supplementaryItems: [
-    { name: "Earnings Per Share", datapoint: "EPS" },
-    { name: "Diluted Earnings Per Share", datapoint: "Diluted_EPS" },
-    { name: "Dividend Per Share", datapoint: "DPS" },
-    { name: "Book Value Per Share", datapoint: "Book_Value_Per_Share" },
-    { name: "Tangible Book Value Per Share", datapoint: "Tangible_Book_Value_Per_Share" },
-    { name: "Weighted Average Shares Outstanding", datapoint: "Weighted_Average_Shares_Outstanding" },
-    { name: "Diluted Weighted Average Shares Outstanding", datapoint: "Diluted_Weighted_Average_Shares_Outstanding" },
-    { name: "Dividend Payout", datapoint: "Dividend_Payout" }
-  ]
-};
+// ========================================
+// 1. APP STATE
+// ========================================
+// Which industry and statement are showing, which node is selected, and the search text.
 
 // State variables tracking selected options
 let currentStatement = "balanceSheet";
@@ -291,6 +22,11 @@ let currentIndustry = "gind";
 let selectedNode = null;
 let searchText = "";
 let searchQuery = "";
+
+// ========================================
+// 2. DISPLAY LABELS
+// ========================================
+// Human-readable names for the statement and industry keys used in the data.
 
 const STATEMENT_LABELS = {
   balanceSheet: "Balance Sheet",
@@ -303,125 +39,12 @@ const INDUSTRY_LABELS = {
   bank: "Bank"
 };
 
-// Concise analyst-grade definitions keyed by datapoint code (taxonomy unchanged).
-const DEFINITIONS = {
-  Total_Assets: "Total resources controlled by the company, equal to total liabilities plus equity.",
-  Current_Assets: "Assets expected to convert to cash or be used within one year.",
-  Cash_And_Cash_Equivalents: "Cash and highly liquid investments with original maturities of three months or less.",
-  Accounts_Receivable: "Amounts owed to the company by customers for goods or services already provided.",
-  Inventory: "Goods held for sale or used in production, not yet sold.",
-  Other_Current_Assets: "Other short-term assets not classified elsewhere.",
-  Non_Current_Assets: "Long-term assets not expected to convert to cash within one year.",
-  Property_Plant_Equipment: "Tangible long-lived assets such as land, buildings, and machinery.",
-  Intangible_Assets: "Non-physical long-term assets such as goodwill, patents, software, and brand rights.",
-  Goodwill: "Premium paid over fair value of net assets in an acquisition.",
-  Other_Intangible_Assets: "Intangible assets other than goodwill.",
-  Other_Non_Current_Assets: "Other long-term assets not classified elsewhere.",
-  Total_Liabilities_And_Equity: "Total claims on assets, equal to total liabilities plus total equity.",
-  Total_Liabilities: "Total amounts the company owes to creditors and other counterparties.",
-  Current_Liabilities: "Obligations due within one year.",
-  Accounts_Payable: "Amounts owed to suppliers for goods or services received.",
-  Short_Term_Debt: "Borrowings and debt due within one year.",
-  Other_Current_Liabilities: "Other short-term obligations not classified elsewhere.",
-  Non_Current_Liabilities: "Obligations due after more than one year.",
-  Long_Term_Debt: "Borrowings and debt due after more than one year.",
-  Deferred_Tax_Liabilities: "Taxes owed in future periods due to temporary timing differences.",
-  Other_Non_Current_Liabilities: "Other long-term obligations not classified elsewhere.",
-  Total_Equity: "Residual owners' claim on assets after deducting liabilities.",
-  Share_Capital: "Capital raised from shareholders through issued shares.",
-  Retained_Earnings: "Cumulative profits retained in the business after dividends.",
-  Other_Equity: "Other equity components such as reserves and other comprehensive income.",
-  Revenue: "Income generated from the company's ordinary business activities during the period.",
-  Product_Service_Revenue: "Revenue specifically attributable to products sold or services rendered.",
-  Other_Operating_Revenue: "Other revenue from ordinary operations not from core products or services.",
-  Cost_Of_Sales: "Total direct costs of goods sold and services delivered during the period.",
-  Cost_Of_Goods_Sold: "Direct costs attributable to producing the goods or services sold during the period.",
-  Other_Cost_Of_Sales: "Other direct costs of sales not captured in cost of goods sold.",
-  Gross_Profit: "Revenue minus cost of sales.",
-  Operating_Expenses: "Costs of running core operations, excluding cost of sales.",
-  Selling_General_Administrative: "Sales, marketing, and administrative overhead costs.",
-  Research_And_Development: "Spending on research and development of new products or processes.",
-  Other_Operating_Expenses: "Other operating costs not classified elsewhere.",
-  EBITDA: "Earnings before interest, taxes, depreciation and amortization.",
-  Depreciation_And_Amortization: "Non-cash charges spreading asset costs over their useful lives.",
-  EBIT: "Earnings before interest and taxes; operating profit including depreciation and amortization.",
-  Non_Operating_Income_Expense: "Net gains or losses from activities outside core operations.",
-  Interest_Income: "Interest earned on cash, loans, and investments during the period.",
-  Interest_Expense: "Cost of borrowings incurred during the period.",
-  Other_Non_Operating_Income_Expense: "Other non-operating gains or losses not classified elsewhere.",
-  Profit_Before_Tax: "Profit after all operating and non-operating items but before income tax.",
-  Income_Tax: "Tax expense on the period's profit, comprising current and deferred tax.",
-  Net_Profit: "Profit attributable to shareholders after all expenses and taxes.",
-  Net_Income: "Profit for the period, taken as the starting point of the operating cash flow reconciliation.",
-  Changes_In_Working_Capital: "Cash impact of changes in short-term operating assets and liabilities.",
-  Other_Operating_Adjustments: "Other non-cash and operating adjustments to reconcile cash from operations.",
-  Cash_Flow_From_Operations: "Net cash generated from core operating activities.",
-  Cash_Flow_From_Investing: "Net cash used in or generated from investing activities.",
-  Cash_Flow_From_Financing: "Net cash from financing activities such as debt and equity.",
-  Capital_Expenditure: "Cash spent on long-term physical assets.",
-  Acquisitions: "Cash spent acquiring other businesses or assets.",
-  Investments: "Cash paid for, or received from, purchases, sales and maturities of investments.",
-  Other_Investing_Activities: "Other investing cash flows not classified elsewhere.",
-  Debt_Issuance: "Cash received from issuing debt.",
-  Debt_Repayment: "Cash paid to repay debt.",
-  Share_Issuance: "Cash received from issuing shares.",
-  Share_Buybacks: "Cash spent repurchasing the company's own shares.",
-  Dividends: "Cash dividends paid to shareholders.",
-  Other_Financing_Activities: "Other financing cash flows not classified elsewhere.",
-  Net_Change_In_Cash: "Net increase or decrease in cash during the period.",
-  Cash_And_Cash_Equivalents_At_Beginning: "Cash balance at the start of the period.",
-  Cash_And_Cash_Equivalents_At_End: "Cash balance at the end of the period.",
-  Bank_Total_Assets: "Total resources controlled by the bank, equal to total liabilities plus equity.",
-  Cash_Balances_Central_Banks: "Cash and balances held with central banks.",
-  Loans_Advances_Banks: "Loans and advances to other banks and financial institutions.",
-  Loans_Advances_Customers: "Loans and advances to customers, the bank's core earning asset.",
-  Investment_Securities: "Securities held by the bank for liquidity and investment income.",
-  Derivative_Financial_Assets: "Positive fair value of the bank's derivative contracts.",
-  Bank_Property_Equipment: "The bank's tangible fixed assets such as branches and equipment.",
-  Other_Bank_Assets: "Other bank assets not classified elsewhere.",
-  Bank_Total_Liabilities_And_Equity: "Total claims on the bank's assets.",
-  Bank_Total_Liabilities: "Total amounts the bank owes to depositors, lenders, and counterparties.",
-  Deposits_From_Banks: "Funds the bank owes to other banks, a wholesale funding source.",
-  Customer_Deposits: "Deposits from customers, the bank's core funding source.",
-  Debt_Securities_Issued: "Bonds and notes issued by the bank to raise funding.",
-  Derivative_Financial_Liabilities: "Negative fair value of the bank's derivative contracts.",
-  Subordinated_Debt: "Lower-ranking debt that absorbs losses before senior creditors.",
-  Other_Bank_Liabilities: "Other bank obligations not classified elsewhere.",
-  Bank_Total_Equity: "Residual owners' claim on the bank after deducting liabilities.",
-  Bank_Share_Capital: "Capital raised from the bank's shareholders through issued shares.",
-  Bank_Retained_Earnings: "Cumulative bank profits retained after dividends.",
-  Bank_Reserves: "Reserves and other equity components of the bank.",
-  Bank_Interest_Expense: "Interest paid by the bank on deposits and borrowings.",
-  Net_Interest_Income: "Interest income minus interest expense; the bank's core earnings measure.",
-  Non_Interest_Income: "Bank income from fees, trading, and other non-interest sources.",
-  Net_Fee_Commission_Income: "Net income from fees and commissions for banking services.",
-  Trading_Fair_Value_Income: "Gains or losses from trading and fair-value instruments.",
-  Bank_Other_Operating_Income: "Other bank operating income not classified elsewhere.",
-  Credit_Loss_Expense: "Charge for expected and incurred losses on loans and credit exposures.",
-  Loan_Loss_Provisions: "Provisions set aside against probable loan losses.",
-  Credit_Impairment_Charges: "Charges for impairment of credit exposures and financial assets.",
-  Staff_Expenses: "Employee compensation and benefit costs of the bank.",
-  Administrative_Expenses: "Administrative and overhead costs of running the bank.",
-  Bank_Taxation: "Income tax expense of the bank for the period.",
-  Bank_CF_Operating_Profit: "Bank operating profit before tax as the cash flow starting point.",
-  Bank_CF_Non_Cash_Adjustments: "Non-cash adjustments to reconcile bank operating profit to cash.",
-  Bank_CF_Change_In_Loans: "Cash impact of changes in loans and advances.",
-  Bank_CF_Change_In_Deposits: "Cash impact of changes in customer deposits.",
-  Bank_CF_Investment_Securities_Purchase: "Cash spent purchasing investment securities.",
-  Bank_CF_Investment_Securities_Proceeds: "Cash received from sale or maturity of investment securities.",
-  Bank_CF_Capex: "Cash spent on the bank's fixed assets.",
-  Bank_CF_Subordinated_Debt_Issued: "Cash received from issuing subordinated debt.",
-  Bank_CF_Subordinated_Debt_Repaid: "Cash paid to repay subordinated debt.",
-  Bank_CF_Dividends_Paid: "Cash dividends paid by the bank to shareholders.",
-  EPS: "Net profit divided by weighted average shares outstanding.",
-  Diluted_EPS: "Net profit divided by shares including potential dilutive securities.",
-  DPS: "Dividend declared per ordinary share.",
-  Book_Value_Per_Share: "Total equity divided by shares outstanding.",
-  Tangible_Book_Value_Per_Share: "Tangible equity divided by shares outstanding.",
-  Weighted_Average_Shares_Outstanding: "Average shares outstanding during the period, adjusted for timing.",
-  Diluted_Weighted_Average_Shares_Outstanding: "Average shares including potential dilutive securities.",
-  Dividend_Payout: "Share of earnings distributed as dividends."
-};
+
+
+// ========================================
+// 3. COPY TO CLIPBOARD
+// ========================================
+// Copies a datapoint code (without brackets) and briefly shows "Copied".
 
 const COPY_ICON_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="5" width="8" height="8" rx="1.5"></rect><path d="M11 5V4a1.5 1.5 0 0 0-1.5-1.5H4A1.5 1.5 0 0 0 2.5 4v5.5A1.5 1.5 0 0 0 4 11h1"></path></svg>';
 
@@ -474,6 +97,12 @@ function addCopyButton(row, code) {
   });
   row.appendChild(btn);
 }
+
+// ========================================
+// 4. DETAIL PANEL
+// ========================================
+// Fills the right-side panel when a datapoint is clicked: name, code,
+// definition, statement, industry, full path, and direct children.
 
 function findPath(nodes, code, trail) {
   for (const node of nodes) {
@@ -543,6 +172,11 @@ function closeDetail() {
   selectedNode = null;
   document.querySelectorAll(".tree-row.selected").forEach(r => r.classList.remove("selected"));
 }
+
+// ========================================
+// 5. DOM HELPERS
+// ========================================
+// Small utilities for finding elements, clearing them, and updating the footer.
 
 function updateChrome(label) {
   const crumb = getElement("breadcrumb");
@@ -622,6 +256,12 @@ function clearElement(element) {
   }
 }
 
+// ========================================
+// 6. SEARCH
+// ========================================
+// Matches names AND codes (case-insensitive, partial). While searching,
+// matching parents stay visible and auto-expand; clearing restores the tree.
+
 function matchesSearch(item) {
   if (!searchQuery) return true;
   const q = searchQuery.toLowerCase();
@@ -634,6 +274,35 @@ function subtreeHasMatch(item) {
   if (matchesSearch(item)) return true;
   return Array.isArray(item.children) && item.children.some(subtreeHasMatch);
 }
+
+function syncSearchUI() {
+  const input = getElement("tree-search");
+  // Never rewrite the field while the user is typing: that would swallow trailing spaces.
+  if (input && document.activeElement !== input && input.value !== searchText) {
+    input.value = searchText;
+  }
+  const clearBtn = getElement("search-clear");
+  if (clearBtn) clearBtn.hidden = !searchQuery;
+}
+
+function setSearch(value) {
+  searchText = String(value == null ? "" : value);
+  searchQuery = searchText.trim();
+  updateTreeDisplay();
+}
+
+function clearSearch() {
+  const input = getElement("tree-search");
+  if (input) input.value = "";
+  setSearch("");
+  if (input) input.focus();
+}
+
+// ========================================
+// 7. TREE RENDERING
+// ========================================
+// Builds the visible tree. A + / - toggle means ONLY "has children" - a parent
+// can still carry its own datapoint code, which renders beside the parent label.
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({
@@ -761,6 +430,11 @@ function renderTree(items, isBalanceSheetRoot = false, parentTrail) {
   return ul;
 }
 
+// ========================================
+// 8. EXPAND / COLLAPSE
+// ========================================
+// Expand All opens every branch; Collapse All closes every branch.
+
 function expandAll() {
   const container = getElement("tree-container") || getElement("statement-tree");
   const suppContainer = getElement("supplementary-container");
@@ -812,6 +486,11 @@ function collapseAll() {
     });
   });
 }
+
+// ========================================
+// 9. STATEMENT DISPLAY
+// ========================================
+// Renders the current statement, the supplementary section, and the footer count.
 
 function renderSupplementaryItems(container) {
   if (!container || !financialData.supplementaryItems) return;
@@ -881,28 +560,10 @@ function updateTreeDisplay() {
   syncSearchUI();
 }
 
-function syncSearchUI() {
-  const input = getElement("tree-search");
-  // Never rewrite the field while the user is typing: that would swallow trailing spaces.
-  if (input && document.activeElement !== input && input.value !== searchText) {
-    input.value = searchText;
-  }
-  const clearBtn = getElement("search-clear");
-  if (clearBtn) clearBtn.hidden = !searchQuery;
-}
-
-function setSearch(value) {
-  searchText = String(value == null ? "" : value);
-  searchQuery = searchText.trim();
-  updateTreeDisplay();
-}
-
-function clearSearch() {
-  const input = getElement("tree-search");
-  if (input) input.value = "";
-  setSearch("");
-  if (input) input.focus();
-}
+// ========================================
+// 10. STATEMENT / INDUSTRY SELECTION
+// ========================================
+// Switching statement or industry re-renders the tree from the data.
 
 function selectStatement(key, render = true) {
   currentStatement = key;
@@ -939,6 +600,11 @@ function selectIndustry(key, render = true) {
 
   if (render) updateTreeDisplay();
 }
+
+// ========================================
+// 11. BUTTON EVENTS AND INITIALIZATION
+// ========================================
+// Wires up every button and starts the app once the page is ready.
 
 function buildTaxonomyUI(treeRoot) {
   clearElement(treeRoot);
@@ -1139,8 +805,6 @@ if (typeof document !== "undefined") {
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
-    financialData,
-    DEFINITIONS,
     renderTree,
     initTree,
     selectStatement,
@@ -1160,3 +824,7 @@ if (typeof module !== "undefined" && module.exports) {
     set currentIndustry(v) { currentIndustry = v; }
   };
 }
+// Note for beginners: in the browser this file runs AFTER taxonomyData.js and
+// definitions.js (see index.html), so it can freely use the `financialData`
+// and `DEFINITIONS` variables they define. `module.exports` is only for
+// quick Node checks and is ignored by the browser.

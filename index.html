@@ -92,6 +92,10 @@
       </footer>
     </main>
   </div>
+  <!-- Data files load first: WHAT exists (taxonomy) and WHAT it means (definitions). -->
+  <!-- script.js (HOW the app works) loads last and reads both variables. -->
+  <script src="taxonomyData.js"></script>
+  <script src="definitions.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
