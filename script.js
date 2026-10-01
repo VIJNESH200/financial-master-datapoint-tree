@@ -385,18 +385,22 @@ function renderTree(items, isBalanceSheetRoot = false, parentTrail) {
       if (!searchQuery) childrenContainer.classList.add("collapsed");
       li.appendChild(childrenContainer);
 
+      // The + / - button ONLY expands or collapses the children. It never opens the panel.
+      toggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const shouldExpand = childrenContainer.classList.contains("collapsed");
+        childrenContainer.classList.toggle("collapsed", !shouldExpand);
+        toggle.textContent = shouldExpand ? "−" : "+";
+        toggle.setAttribute("aria-expanded", shouldExpand ? "true" : "false");
+        toggle.setAttribute("aria-label", `${shouldExpand ? "Collapse" : "Expand"} ${item.name}`);
+        row.classList.toggle("expanded", shouldExpand);
+      });
+
+      // The name label and the datapoint code open the detail panel.
       row.addEventListener("click", (e) => {
         if (e.target.closest(".copy-btn")) return;
-        if (e.target.closest(".datapoint-code")) {
-          openDetail(item, [{ name: STATEMENT_LABELS[currentStatement] || currentStatement }].concat(trail));
-          return;
-        }
-        const isCollapsed = childrenContainer.classList.contains("collapsed");
-        childrenContainer.classList.toggle("collapsed");
-        toggle.textContent = isCollapsed ? "−" : "+";
-        toggle.setAttribute("aria-expanded", isCollapsed ? "true" : "false");
-        toggle.setAttribute("aria-label", `${isCollapsed ? "Collapse" : "Expand"} ${item.name}`);
-        row.classList.toggle("expanded", isCollapsed);
+        if (e.target.closest(".tree-toggle")) return;
+        openDetail(item, [{ name: STATEMENT_LABELS[currentStatement] || currentStatement }].concat(trail));
       });
     } else {
       const spacer = document.createElement("span");
