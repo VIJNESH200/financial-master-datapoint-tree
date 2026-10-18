@@ -1,27 +1,17 @@
-// taxonomyData.js - WHAT financial items exist.
+// taxonomyData.js — financial taxonomy and hierarchy.
 //
-// This file holds the entire financial taxonomy used by the app. Each item has:
-//   name      = text displayed on the webpage (e.g. "Cost of Goods Sold").
-//   datapoint = datapoint code shown in [brackets] (e.g. "Cost_Of_Goods_Sold").
-//               Used by search, the copy button, and the detail panel.
-//   children  = child items nested underneath this item (optional).
-//               A + / - toggle appears ONLY when children exist, so a parent
-//               may still carry its own datapoint code AND have children.
-//   isSide    = balance-sheet layout hint ("assets" or "liabilitiesEquity");
-//               leave it as-is, it only affects styling.
+// financialData groups items by industry and statement.
+// Each item uses:
+//   name       Display label shown on the page.
+//   datapoint  Code shown in brackets and used by search, copy and definitions.
+//   children   Optional nested items. An item can have its own code and children;
+//              the + / − control appears only when children exist.
+//   isSide     Optional balance-sheet styling hint: "assets" or "liabilitiesEquity".
 //
-// How to ADD a new datapoint (leaf, no children):
-//   { name: "Cash & Cash Equivalents", datapoint: "Cash_And_Cash_Equivalents" },
-//
-// How to ADD a child under an existing datapoint:
-//   { name: "Current Assets", datapoint: "Current_Assets", children: [
-//       { name: "Cash & Cash Equivalents", datapoint: "Cash_And_Cash_Equivalents" }
-//   ] },
-//
-// Then add a matching definition in definitions.js under the same code.
-//
-// Do NOT edit script.js when only adding, removing, or changing taxonomy -
-// the tree, search, counts, and detail panel all follow this file automatically.
+// Add, remove or move items here, and keep their definitions in definitions.js.
+// The UI follows this structure, so ordinary taxonomy changes do not require
+// changes to script.js.
+
 const financialData = {
   gind: {
     balanceSheet: [
@@ -307,7 +297,7 @@ const financialData = {
   ]
 };
 
-// Lets Node load this file for quick checks (ignored by the browser).
+// Export the data for Node-based checks; the browser reads this file as a script.
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { financialData };
 }
