@@ -395,25 +395,16 @@ function renderSupplementaryTree(title, items) {
   return tree;
 }
 
-// Shared items remain visible under every statement. Book value measures are
-// shown separately when the Balance Sheet is selected.
+// Renders the shared Supplementary Items section below the selected statement.
 function renderSupplementaryItems() {
   const container = document.getElementById("supplementary-container");
   container.innerHTML = "";
 
-  if (currentStatement === "balanceSheet") {
-    const balanceSheetTree = renderSupplementaryTree(
-      "Balance Sheet Supplementary Items",
-      financialData.balanceSheetSupplementaryItems
-    );
-    if (balanceSheetTree) container.appendChild(balanceSheetTree);
-  }
-
-  const sharedTree = renderSupplementaryTree(
+  const tree = renderSupplementaryTree(
     "Supplementary Items",
     financialData.supplementaryItems
   );
-  if (sharedTree) container.appendChild(sharedTree);
+  if (tree) container.appendChild(tree);
 }
 
 // Draws the current industry + statement: the tree, the footer text and the supplementary section.
