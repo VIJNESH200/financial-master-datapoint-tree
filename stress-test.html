@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Master Datapoint Tree — Stress Test</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .stress-test-note {
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border: 1px solid #d7e3fd;
+      border-radius: 8px;
+      background: #eff4ff;
+      color: #1e3a8a;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <main class="app-main" id="tree-root">
+      <div class="stress-test-note" role="status">
+        <strong>Stress-test mode:</strong> synthetic data only — 256 datapoint nodes across six industry/statement combinations, plus eight supplementary items. This page uses the real app logic and does not change the production taxonomy.
+      </div>
+
+      <div class="toolbar">
+        <div class="selectors-container">
+          <div class="selector-group">
+            <div class="selector-label">Industry</div>
+            <div class="toggle-group" id="industry-toggles" role="tablist" aria-label="Industry">
+              <button type="button" class="toggle-btn active" data-target="gind" role="tab" aria-selected="true">GIND</button>
+              <button type="button" class="toggle-btn" data-target="bank" role="tab" aria-selected="false">Bank</button>
+            </div>
+          </div>
+
+          <div class="selector-group">
+            <div class="selector-label">Financial Statement</div>
+            <div class="toggle-group" id="statement-toggles" role="tablist" aria-label="Financial Statement">
+              <button type="button" class="toggle-btn active" data-target="balanceSheet" role="tab" aria-selected="true">Balance Sheet</button>
+              <button type="button" class="toggle-btn" data-target="incomeStatement" role="tab" aria-selected="false">Income Statement</button>
+              <button type="button" class="toggle-btn" data-target="cashFlow" role="tab" aria-selected="false">Cash Flow Statement</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-row" role="search">
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="4.5"></circle><path d="M10.5 10.5 14 14"></path></svg>
+            <input type="text" id="tree-search" placeholder="Search datapoints or concepts..." autocomplete="off" spellcheck="false" aria-label="Search datapoints or concepts">
+            <button type="button" class="search-clear" id="search-clear" aria-label="Clear search" title="Clear search" hidden>×</button>
+          </div>
+        </div>
+
+        <div class="tree-controls">
+          <button type="button" class="action-btn" id="expand-all-btn">Expand All</button>
+          <button type="button" class="action-btn" id="collapse-all-btn">Collapse All</button>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <section class="tree-card">
+          <div id="tree-container" class="tree-display" role="region" aria-label="Datapoint Hierarchy"></div>
+          <div id="supplementary-container" class="supplementary-section" role="region" aria-label="Supplementary Items"></div>
+        </section>
+
+        <aside class="detail-panel" id="detail-panel" aria-label="Datapoint details" hidden>
+          <div class="detail-head">
+            <div>
+              <div class="detail-eyebrow">Datapoint</div>
+              <h2 class="detail-title" id="detail-name">—</h2>
+            </div>
+            <button type="button" class="detail-close" id="detail-close" aria-label="Close details">×</button>
+          </div>
+          <button type="button" class="detail-code" id="detail-code" title="Click to copy">[ — ]</button>
+          <div class="detail-copied" id="detail-copied" hidden>Copied</div>
+          <div class="detail-block detail-definition-block">
+            <div class="detail-label">Definition</div>
+            <p class="detail-definition-text" id="detail-definition">—</p>
+          </div>
+          <dl class="detail-meta">
+            <div><dt>Statement</dt><dd id="detail-statement">—</dd></div>
+            <div><dt>Industry</dt><dd id="detail-industry">—</dd></div>
+          </dl>
+          <div class="detail-block">
+            <div class="detail-label">Path</div>
+            <div class="detail-path" id="detail-path">—</div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Build a nested synthetic taxonomy with a fixed number of datapoints per statement.
+    const testDefinitions = {};
+    let testCodeNumber = 0;
+
+    function makeTestNode(name, prefix) {
+      const code = prefix + "_" + String(++testCodeNumber).padStart(3, "0");
+      testDefinitions[code] = "Synthetic test definition for " + name + ".";
+      return { name, datapoint: code };
+    }
+
+    function buildTestStatement(prefix, rootNames, totalNodes) {
+      const roots = rootNames.map((name) => {
+        const root = makeTestNode(name, prefix);
+        root.children = [];
+        for (let groupIndex = 1; groupIndex <= 2; groupIndex++) {
+          const group = makeTestNode(name + " — Group " + groupIndex, prefix);
+          group.children = [];
+          root.children.push(group);
+        }
+        return root;
+      });
+
+      const groups = roots.flatMap(root => root.children);
+      const totalLeaves = totalNodes - roots.length - groups.length;
+
+      groups.forEach((group, index) => {
+        const leafCount = Math.floor(totalLeaves / groups.length) +
+          (index < totalLeaves % groups.length ? 1 : 0);
+
+        for (let itemIndex = 1; itemIndex <= leafCount; itemIndex++) {
+          group.children.push(makeTestNode(group.name + " — Item " + itemIndex, prefix));
+        }
+      });
+
+      if (prefix.endsWith("_BS")) {
+        roots[0].isSide = "assets";
+        roots[1].isSide = "liabilitiesEquity";
+      }
+
+      return roots;
+    }
+
+    const financialData = {
+      gind: {
+        balanceSheet: buildTestStatement("STRESS_GIND_BS",
+          ["Assets", "Liabilities", "Equity", "Other Balance Sheet Items"], 42),
+        incomeStatement: buildTestStatement("STRESS_GIND_IS",
+          ["Revenue", "Operating Expenses", "Non-Operating Items", "Profit and Tax"], 42),
+        cashFlow: buildTestStatement("STRESS_GIND_CF",
+          ["Operating Activities", "Investing Activities", "Financing Activities", "Cash Reconciliation"], 41)
+      },
+      bank: {
+        balanceSheet: buildTestStatement("STRESS_BANK_BS",
+          ["Bank Assets", "Bank Liabilities", "Bank Equity", "Other Bank Items"], 41),
+        incomeStatement: buildTestStatement("STRESS_BANK_IS",
+          ["Interest Income", "Funding Costs", "Operating Items", "Profit and Tax"], 41),
+        cashFlow: buildTestStatement("STRESS_BANK_CF",
+          ["Operating Cash Flows", "Investing Cash Flows", "Financing Cash Flows", "Cash Reconciliation"], 41)
+      },
+      supplementaryItems: [
+        ["Earnings Per Share", "STRESS_EPS"],
+        ["Diluted Earnings Per Share", "STRESS_DILUTED_EPS"],
+        ["Dividend Per Share", "STRESS_DPS"],
+        ["Book Value Per Share", "STRESS_BVPS"],
+        ["Tangible Book Value Per Share", "STRESS_TBVPS"],
+        ["Weighted Average Shares Outstanding", "STRESS_WASO"],
+        ["Diluted Weighted Average Shares Outstanding", "STRESS_DILUTED_WASO"],
+        ["Dividend Payout", "STRESS_DIVIDEND_PAYOUT"]
+      ].map(([name, code]) => {
+        testDefinitions[code] = "Synthetic test definition for " + name + ".";
+        return { name, datapoint: code };
+      })
+    };
+
+    const DEFINITIONS = testDefinitions;
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
