@@ -542,10 +542,6 @@ mark {
   border-top: 1px dashed #cbd5e1;
 }
 
-.supplementary-tree + .supplementary-tree {
-  margin-top: 12px;
-}
-
 .supplementary-header {
   display: inline-flex;
   align-items: center;
