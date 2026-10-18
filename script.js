@@ -112,7 +112,7 @@ function openDetail(item, trail) {
     });
   };
 
-  document.getElementById("detail-statement").textContent = STATEMENT_LABELS[currentStatement] || currentStatement;
+  document.getElementById("detail-statement").textContent = getDetailStatement(trail);
   document.getElementById("detail-industry").textContent = INDUSTRY_LABELS[currentIndustry] || currentIndustry;
   document.getElementById("detail-definition").textContent = DEFINITIONS[selectedNode] || "Definition not available.";
   document.getElementById("detail-path").textContent = trail.map(step => step.name).join(" → ");
@@ -258,7 +258,8 @@ function renderBranchRow(item, row, trail) {
   row.addEventListener("click", (e) => {
     if (e.target.closest(".copy-btn")) return;
     if (e.target.closest(".tree-toggle")) return;
-    openDetail(item, [detailRoot()].concat(trail));
+    if (item.isSectionHeader) return;
+    openDetail(item, getDetailPath(trail));
   });
 
   return childrenBox;
@@ -279,13 +280,31 @@ function renderLeafRow(item, row, trail) {
 
   row.addEventListener("click", (e) => {
     if (e.target.closest(".copy-btn")) return;
-    openDetail(item, [detailRoot()].concat(trail));
+    openDetail(item, getDetailPath(trail));
   });
 }
 
-// The first step of the "Path" shown in the detail panel, e.g. "Income Statement".
+// The first step of a statement item's path, such as "Income Statement".
 function detailRoot() {
   return { name: STATEMENT_LABELS[currentStatement] || currentStatement };
+}
+
+// Supplementary items belong to their own section, not to whichever statement is selected.
+function getDetailPath(trail) {
+  if (trail[0] && trail[0].isSupplementarySection) {
+    return trail.map(step => ({ name: step.name }));
+  }
+
+  return [detailRoot()].concat(trail);
+}
+
+// Keep the Statement field consistent with the item's path.
+function getDetailStatement(trail) {
+  if (trail[0] && trail[0].isSupplementarySection) {
+    return trail[0].name;
+  }
+
+  return STATEMENT_LABELS[currentStatement] || currentStatement;
 }
 
 function renderTree(items, isBalanceSheetRoot, parentTrail) {
@@ -360,14 +379,41 @@ function collapseAll() {
 // Switching statement or industry re-renders the tree from the data.
 
 // Renders the expandable Supplementary Items section.
+function renderSupplementaryTree(title, items) {
+  if (!Array.isArray(items) || items.length === 0) return null;
+
+  const section = {
+    name: title,
+    children: items,
+    isSectionHeader: true,
+    isSupplementarySection: true
+  };
+
+  const tree = renderTree([section], false, []);
+  tree.classList.add("supplementary-tree");
+  tree.querySelectorAll(".leaf-row").forEach(row => row.classList.add("supplementary-row"));
+  return tree;
+}
+
+// Shared items remain visible under every statement. Book value measures are
+// shown separately when the Balance Sheet is selected.
 function renderSupplementaryItems() {
   const container = document.getElementById("supplementary-container");
   container.innerHTML = "";
 
-  const suppTree = renderTree([{ name: "Supplementary Items", children: financialData.supplementaryItems }], false);
-  suppTree.classList.add("supplementary-tree");
-  suppTree.querySelectorAll(".leaf-row").forEach(row => row.classList.add("supplementary-row"));
-  container.appendChild(suppTree);
+  if (currentStatement === "balanceSheet") {
+    const balanceSheetTree = renderSupplementaryTree(
+      "Balance Sheet Supplementary Items",
+      financialData.balanceSheetSupplementaryItems
+    );
+    if (balanceSheetTree) container.appendChild(balanceSheetTree);
+  }
+
+  const sharedTree = renderSupplementaryTree(
+    "Supplementary Items",
+    financialData.supplementaryItems
+  );
+  if (sharedTree) container.appendChild(sharedTree);
 }
 
 // Draws the current industry + statement: the tree, the footer text and the supplementary section.
