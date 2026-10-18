@@ -13,7 +13,7 @@ For each industry you can look at:
 - **Income Statement**
 - **Cash Flow Statement**
 
-Income Statements also include weighted-average share counts and EPS measures after Net Profit. The Balance Sheet has a separate supplementary section for book value per share measures. A shared **Supplementary Items** section (Dividend Per Share and Dividend Payout) remains available under every statement.
+...plus a shared **Supplementary Items** list containing EPS, DPS, book values, shares outstanding and dividend payout.
 
 Every item in the tree shows its name and its datapoint code in `[brackets]`, for example `Revenue [Revenue]`.
 Items with sub-items have a `+` / `−` button to open them.
@@ -67,8 +67,7 @@ Open `taxonomyData.js`. All the data is inside one object called `financialData`
 ```
 gind → balanceSheet / incomeStatement / cashFlow
 bank → balanceSheet / incomeStatement / cashFlow
-balanceSheetSupplementaryItems  (shown only with the Balance Sheet)
-supplementaryItems               (shared list shown under every statement)
+supplementaryItems   (one shared list, shown as "Supplementary Items")
 ```
 
 Find the list where the new item belongs — for example the Bank Income Statement — and add the new item inside that list.
