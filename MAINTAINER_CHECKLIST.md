@@ -41,6 +41,8 @@ The key must match the `datapoint` value exactly. Keep the definition specific t
 - [ ] Click the item and confirm its definition and hierarchy path. Test the copy button.
 - [ ] Check the other statements and industry selector still work. Check Supplementary Items too.
 
+For changes to `script.js` or `style.css`, also open `stress-test.html` and test search, Expand All, Collapse All, the detail panel and copy button. Repeat at a narrow browser width.
+
 ## Before committing
 
 - [ ] Remove any temporary datapoints used for manual testing.
