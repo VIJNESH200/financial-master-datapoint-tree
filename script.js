@@ -154,16 +154,6 @@ function subtreeHasMatch(item) {
   return Array.isArray(item.children) && item.children.some(subtreeHasMatch);
 }
 
-// Counts items that pass the test, at every level (used for the footer text).
-function countNodes(nodes, test) {
-  let count = 0;
-  nodes.forEach(item => {
-    if (test(item)) count += 1;
-    if (item.children) count += countNodes(item.children, test);
-  });
-  return count;
-}
-
 function syncSearchUI() {
   const input = document.getElementById("tree-search");
   // Never rewrite the field while the user is typing: that would swallow trailing spaces.
@@ -417,23 +407,8 @@ function updateTreeDisplay() {
   container.innerHTML = "";
   container.appendChild(renderTree(statementData, currentStatement === "balanceSheet", []));
 
-  const label = searchQuery
-    ? countNodes(statementData, matchesSearch) + " matches"
-    : countNodes(statementData, item => item.datapoint || item.code) + " datapoints";
-  updateFooter(label);
-
   renderSupplementaryItems();
   syncSearchUI();
-}
-
-// Footer: breadcrumb on the left ("GIND › Balance Sheet"), item count on the right.
-function updateFooter(label) {
-  const industry = INDUSTRY_LABELS[currentIndustry] || currentIndustry;
-  const statement = STATEMENT_LABELS[currentStatement] || currentStatement;
-  document.getElementById("breadcrumb").textContent = selectedNode
-    ? industry + " › " + statement + " › " + selectedNode
-    : industry + " › " + statement;
-  document.getElementById("tree-count").textContent = String(label);
 }
 
 // Highlights the selected button in one of the two toggle groups.
