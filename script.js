@@ -96,7 +96,7 @@ function addCopyButton(row, code) {
 // ========================================
 // Shows the datapoint's code, definition, statement, industry and full path.
 
-function openDetail(item, trail) {
+function openDetail(item, trail, statementLabel) {
   selectedNode = item.datapoint || item.code;
   document.querySelectorAll(".tree-row.selected").forEach(row => row.classList.remove("selected"));
   const selectedRow = document.querySelector('.tree-row[data-code="' + selectedNode + '"]');
@@ -112,7 +112,7 @@ function openDetail(item, trail) {
     });
   };
 
-  document.getElementById("detail-statement").textContent = getDetailStatement(trail);
+  document.getElementById("detail-statement").textContent = statementLabel;
   document.getElementById("detail-industry").textContent = INDUSTRY_LABELS[currentIndustry] || currentIndustry;
   document.getElementById("detail-definition").textContent = DEFINITIONS[selectedNode] || "Definition not available.";
   document.getElementById("detail-path").textContent = trail.map(step => step.name).join(" → ");
@@ -259,7 +259,7 @@ function renderBranchRow(item, row, trail) {
     if (e.target.closest(".copy-btn")) return;
     if (e.target.closest(".tree-toggle")) return;
     if (item.isSectionHeader) return;
-    openDetail(item, getDetailPath(trail));
+    openDetail(item, getDetailPath(trail), getDetailStatement(trail));
   });
 
   return childrenBox;
@@ -280,7 +280,7 @@ function renderLeafRow(item, row, trail) {
 
   row.addEventListener("click", (e) => {
     if (e.target.closest(".copy-btn")) return;
-    openDetail(item, getDetailPath(trail));
+    openDetail(item, getDetailPath(trail), getDetailStatement(trail));
   });
 }
 
