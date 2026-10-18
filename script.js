@@ -249,6 +249,10 @@ function renderBranchRow(item, row, trail) {
       childrenBox.appendChild(renderedChildren.firstChild);
     }
     childrenBox.dataset.rendered = "true";
+    toggle.textContent = "−";
+    toggle.setAttribute("aria-expanded", "true");
+    toggle.setAttribute("aria-label", "Collapse " + item.name);
+    row.classList.add("expanded");
   } else {
     childrenBox.classList.add("collapsed");
   }
@@ -342,9 +346,11 @@ function renderTree(items, isBalanceSheetRoot, parentTrail) {
     const hasChildren = Array.isArray(item.children) && item.children.length > 0;
     const codeValue = item.datapoint || item.code;
     const trail = (parentTrail || []).concat([item]);
+    const isSupplementaryItem = (parentTrail || []).some(step => step.isSupplementarySection);
 
     const row = document.createElement("div");
     row.className = "tree-row " + (hasChildren ? "branch-row" : "leaf-row");
+    if (isSupplementaryItem && !hasChildren) row.classList.add("supplementary-row");
     if (codeValue) row.setAttribute("data-code", codeValue);
     listItem.appendChild(row);
 
