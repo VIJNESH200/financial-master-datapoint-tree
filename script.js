@@ -1,17 +1,12 @@
-// script.js - HOW the application works.
+// script.js — application behavior.
 //
-// This file has NO data in it. It only contains the application logic:
-//   taxonomyData.js = WHAT financial items exist  (the `financialData` variable).
-//   definitions.js  = WHAT those items mean       (the `DEFINITIONS` variable).
-//   script.js       = HOW the app works           (this file).
-//   style.css       = HOW it looks.  index.html   = WHAT is on the page.
-//
-// Load order in index.html matters: taxonomyData.js and definitions.js
-// must load BEFORE this file, because the functions below read the
-// `financialData` and `DEFINITIONS` variables they define.
+// taxonomyData.js defines the `financialData` tree.
+// definitions.js maps datapoint codes to their descriptions.
+// This file renders the UI and handles search, selection, copying and expansion.
+// index.html must load both data files before this script.
 
 // ========================================
-// 1. APP STATE
+// 1. App state
 // ========================================
 // Which industry and statement are showing, which node is selected, and the search text.
 
@@ -22,7 +17,7 @@ let searchText = "";
 let searchQuery = "";
 
 // ========================================
-// 2. DISPLAY LABELS
+// 2. Display labels
 // ========================================
 // Human-readable names for the statement and industry keys used in the data.
 
@@ -38,14 +33,14 @@ const INDUSTRY_LABELS = {
 };
 
 // ========================================
-// 3. COPY TO CLIPBOARD
+// 3. Copy to clipboard
 // ========================================
 // Copies a datapoint code (without brackets) and briefly shows "Copied".
 
 const COPY_ICON_SVG = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="5" width="8" height="8" rx="1.5"></rect><path d="M11 5V4a1.5 1.5 0 0 0-1.5-1.5H4A1.5 1.5 0 0 0 2.5 4v5.5A1.5 1.5 0 0 0 4 11h1"></path></svg>';
 
 function copyText(text, done) {
-  // Older way: a hidden text field plus the classic copy command.
+  // Fallback for browsers without the Clipboard API.
   function fallback() {
     try {
       const field = document.createElement("textarea");
@@ -61,7 +56,7 @@ function copyText(text, done) {
       done(false);
     }
   }
-  // Preferred modern way: the clipboard API.
+  // Use the Clipboard API when it is available.
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(() => done(true), fallback);
   } else {
@@ -97,23 +92,9 @@ function addCopyButton(row, code) {
 }
 
 // ========================================
-// 4. DETAIL PANEL
+// 4. Detail panel
 // ========================================
-// Fills the right-side panel when a datapoint is clicked: name, code,
-// definition, statement, industry, full path, and direct children.
-
-function findItemPath(nodes, code, trail) {
-  for (const item of nodes) {
-    const itemCode = item.datapoint || item.code;
-    const next = trail.concat([item]);
-    if (itemCode && itemCode === code) return next;
-    if (item.children) {
-      const hit = findItemPath(item.children, code, next);
-      if (hit) return hit;
-    }
-  }
-  return null;
-}
+// Shows the datapoint's code, definition, statement, industry and full path.
 
 function openDetail(item, trail) {
   selectedNode = item.datapoint || item.code;
@@ -136,33 +117,6 @@ function openDetail(item, trail) {
   document.getElementById("detail-definition").textContent = DEFINITIONS[selectedNode] || "Definition not available.";
   document.getElementById("detail-path").textContent = trail.map(step => step.name).join(" → ");
 
-  const childrenBlock = document.getElementById("detail-children-block");
-  const childrenList = document.getElementById("detail-children");
-  childrenList.innerHTML = "";
-
-  if (item.children && item.children.length) {
-    childrenBlock.hidden = false;
-    item.children.forEach(child => {
-      const listItem = document.createElement("li");
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = "→ " + child.name;
-      button.addEventListener("click", () => {
-        // Look the child up in the data so the panel also gets its full path.
-        const path = findItemPath(
-          financialData[currentIndustry][currentStatement],
-          child.datapoint || child.code,
-          [{ name: STATEMENT_LABELS[currentStatement] || currentStatement }]
-        );
-        if (path) openDetail(child, path);
-      });
-      listItem.appendChild(button);
-      childrenList.appendChild(listItem);
-    });
-  } else {
-    childrenBlock.hidden = true;
-  }
-
   document.getElementById("detail-panel").hidden = false;
 }
 
@@ -181,7 +135,7 @@ function flashElement(id) {
 }
 
 // ========================================
-// 5. SEARCH
+// 5. Search
 // ========================================
 // Matches names AND codes (case-insensitive, partial). While searching,
 // matching parents stay visible and auto-expand; clearing restores the tree.
@@ -234,10 +188,10 @@ function clearSearch() {
 
 
 // ========================================
-// 6. TREE RENDERING
+// 6. Tree rendering
 // ========================================
-// Builds the visible tree. A + / - toggle means ONLY "has children" - a parent
-// can still carry its own datapoint code, which renders beside the parent label.
+// Builds the visible tree. The toggle shows whether an item has children;
+// an item can also display its own datapoint code beside the label.
 
 const ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
 
@@ -289,7 +243,7 @@ function renderBranchRow(item, row, trail) {
   const childrenBox = renderTree(item.children, false, trail);
   if (!searchQuery) childrenBox.classList.add("collapsed");
 
-  // The + / - button ONLY expands or collapses the children. It never opens the panel.
+  // The toggle only expands or collapses the child list.
   toggle.addEventListener("click", (e) => {
     e.stopPropagation();
     const shouldExpand = childrenBox.classList.contains("collapsed");
@@ -367,7 +321,7 @@ function renderTree(items, isBalanceSheetRoot, parentTrail) {
 
 
 // ========================================
-// 7. EXPAND / COLLAPSE
+// 7. Expand and collapse
 // ========================================
 // Expand All opens every branch; Collapse All closes every branch.
 
@@ -401,11 +355,11 @@ function collapseAll() {
 }
 
 // ========================================
-// 8. STATEMENT / INDUSTRY SELECTION
+// 8. Statement and industry selection
 // ========================================
 // Switching statement or industry re-renders the tree from the data.
 
-// Renders the "Supplementary Items" section: a small tree with its own expandable heading.
+// Renders the expandable Supplementary Items section.
 function renderSupplementaryItems() {
   const container = document.getElementById("supplementary-container");
   container.innerHTML = "";
@@ -468,7 +422,7 @@ function selectIndustry(key) {
 
 
 // ========================================
-// 9. INITIALIZATION
+// 9. Initialization
 // ========================================
 // Wires up every button and starts the app once the page is ready.
 
