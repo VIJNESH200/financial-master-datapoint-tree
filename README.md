@@ -17,7 +17,7 @@ For each industry you can look at:
 
 Every item in the tree shows its name and its datapoint code in `[brackets]`, for example `Revenue [Revenue]`.
 Items with sub-items have a `+` / `−` button to open them.
-Clicking an item opens the panel on the right, which shows the datapoint code, its definition, the statement, the industry, the full path and the direct children.
+Clicking an item opens the panel on the right, which shows the datapoint code, its definition, the statement, the industry and the full hierarchy path.
 
 The whole project is plain HTML, CSS and JavaScript. There is no database, no server, no framework and nothing to install.
 

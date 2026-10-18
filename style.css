@@ -1,4 +1,4 @@
-/* style.css - HOW it looks. Only colors, spacing, and layout live here. */
+/* style.css — visual layout, spacing and colours. */
 /* Base styling */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -336,10 +336,7 @@ mark {
   border-top: 1px solid #cbd5e1;
 }
 
-/* ----------------------------------------------------
-   BALANCE SHEET CONNECTOR STRUCTURE (Requirement 4 & 5)
-   Assets vs. Liabilities + Equity
-   ---------------------------------------------------- */
+/* Balance sheet connectors: Assets versus Liabilities and Equity. */
 .bs-root-branch {
   position: relative;
 }
@@ -724,34 +721,6 @@ mark {
   font-size: 12.5px;
   color: #334155;
   line-height: 1.7;
-}
-
-.detail-children {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 5px;
-  font-size: 12.5px;
-}
-
-.detail-children button {
-  border: 1px solid var(--border-soft);
-  background: #fff;
-  border-radius: 6px;
-  padding: 4px 7px;
-  font: inherit;
-  font-size: 12px;
-  color: #334155;
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
-}
-
-.detail-children button:hover {
-  border-color: var(--accent-border);
-  color: var(--accent);
-  background: var(--accent-bg);
 }
 
 /* Footer breadcrumb + counts */
