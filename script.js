@@ -419,7 +419,6 @@ function renderSupplementaryTree(title, items) {
 
   const tree = renderTree([section], false, []);
   tree.classList.add("supplementary-tree");
-  tree.querySelectorAll(".leaf-row").forEach(row => row.classList.add("supplementary-row"));
   return tree;
 }
 
