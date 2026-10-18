@@ -56,7 +56,7 @@
           <div id="supplementary-container" class="supplementary-section" role="region" aria-label="Supplementary Items"></div>
         </section>
 
-        <!-- Lightweight datapoint detail panel -->
+        <!-- Datapoint detail panel -->
         <aside class="detail-panel" id="detail-panel" aria-label="Datapoint details" hidden>
           <div class="detail-head">
             <div>
@@ -79,10 +79,6 @@
             <div class="detail-label">Path</div>
             <div class="detail-path" id="detail-path">—</div>
           </div>
-          <div class="detail-block" id="detail-children-block" hidden>
-            <div class="detail-label">Direct children</div>
-            <ul class="detail-children" id="detail-children"></ul>
-          </div>
         </aside>
       </div>
 
@@ -92,8 +88,8 @@
       </footer>
     </main>
   </div>
-  <!-- Data files load first: WHAT exists (taxonomy) and WHAT it means (definitions). -->
-  <!-- script.js (HOW the app works) loads last and reads both variables. -->
+  <!-- Load the taxonomy and definitions before the application logic. -->
+  <!-- script.js uses the variables created by those two data files. -->
   <script src="taxonomyData.js"></script>
   <script src="definitions.js"></script>
   <script src="script.js"></script>
