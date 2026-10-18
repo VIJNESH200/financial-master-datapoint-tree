@@ -1,15 +1,9 @@
-// definitions.js - WHAT the financial items mean.
+// definitions.js — explanations for datapoint codes.
 //
-// One flat lookup table keyed by datapoint code
-// (the same code used next to each item in taxonomyData.js):
-//   Revenue: "Income generated from the company's ordinary business activities..."
-//
-// How to ADD or EDIT a definition:
-//   1. Use the exact datapoint code as the key.
-//   2. Keep it to 1-2 short sentences written for a financial analyst.
-//   3. Describe the item itself (an aggregate gets the aggregate meaning,
-//      a component gets the component meaning).
-// A code with no entry here shows "Definition not available." in the detail panel.
+// DEFINITIONS is a lookup table whose keys must match the `datapoint` values
+// in taxonomyData.js. Keep each description concise and specific to its item.
+// Describe aggregate lines as aggregates and component lines as components.
+// A code without an entry displays "Definition not available." in the detail panel.
 const DEFINITIONS = {
   Total_Assets: "Total resources controlled by the company, equal to total liabilities plus equity.",
   Current_Assets: "Assets expected to convert to cash or be used within one year.",
@@ -129,7 +123,7 @@ const DEFINITIONS = {
   Dividend_Payout: "Share of earnings distributed as dividends."
 };
 
-// Lets Node load this file for quick checks (ignored by the browser).
+// Export the definitions for Node-based checks; the browser reads this file as a script.
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { DEFINITIONS };
 }
