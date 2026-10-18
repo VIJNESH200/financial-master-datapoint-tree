@@ -35,6 +35,7 @@ The key must match the `datapoint` value exactly. Keep the definition specific t
 ## Validate the change
 
 - [ ] Run `node --check taxonomyData.js` and `node --check definitions.js`.
+- [ ] Run `node check.js` and resolve every reported issue. It checks for missing datapoint codes, missing or blank definitions, unused definition keys and codes used with different display names. Reusing a code with the same display name in multiple places is allowed.
 - [ ] Open `index.html` and refresh the page.
 - [ ] Select the relevant industry and statement. Expand the parent and confirm the new item appears in the right place.
 - [ ] Search by both the display name and datapoint code.
