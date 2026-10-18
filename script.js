@@ -15,6 +15,7 @@ let currentIndustry = "gind";
 let selectedNode = null;
 let searchText = "";
 let searchQuery = "";
+let subtreeMatchCache = new WeakMap();
 
 // ========================================
 // 2. Display labels
@@ -148,10 +149,16 @@ function matchesSearch(item) {
   return name.includes(query) || code.includes(query);
 }
 
-// True when the item matches itself, or when any item underneath it matches.
+// Cache each subtree's search result so each item is checked once per query.
 function subtreeHasMatch(item) {
-  if (matchesSearch(item)) return true;
-  return Array.isArray(item.children) && item.children.some(subtreeHasMatch);
+  if (!searchQuery) return true;
+  if (subtreeMatchCache.has(item)) return subtreeMatchCache.get(item);
+
+  const hasMatch = matchesSearch(item) ||
+    (Array.isArray(item.children) && item.children.some(subtreeHasMatch));
+
+  subtreeMatchCache.set(item, hasMatch);
+  return hasMatch;
 }
 
 function syncSearchUI() {
@@ -166,6 +173,7 @@ function syncSearchUI() {
 function setSearch(value) {
   searchText = String(value == null ? "" : value);
   searchQuery = searchText.trim();
+  subtreeMatchCache = new WeakMap();
   updateTreeDisplay();
 }
 
@@ -229,14 +237,35 @@ function renderBranchRow(item, row, trail) {
   row.appendChild(label);
   appendCodeChip(row, item);
 
-  // Children start collapsed; while searching the whole matched path stays open.
-  const childrenBox = renderTree(item.children, false, trail);
-  if (!searchQuery) childrenBox.classList.add("collapsed");
+  // Build child rows only when a branch is opened. Search results need their
+  // matching paths immediately, so those rows are rendered during the search.
+  const childrenBox = document.createElement("ul");
+  childrenBox.className = "tree-branch";
+  childrenBox.dataset.rendered = "false";
 
-  // The toggle only expands or collapses the child list.
+  if (searchQuery) {
+    const renderedChildren = renderTree(item.children, false, trail);
+    while (renderedChildren.firstChild) {
+      childrenBox.appendChild(renderedChildren.firstChild);
+    }
+    childrenBox.dataset.rendered = "true";
+  } else {
+    childrenBox.classList.add("collapsed");
+  }
+
+  // The toggle renders a branch's children the first time it is opened.
   toggle.addEventListener("click", (e) => {
     e.stopPropagation();
     const shouldExpand = childrenBox.classList.contains("collapsed");
+
+    if (shouldExpand && childrenBox.dataset.rendered !== "true") {
+      const renderedChildren = renderTree(item.children, false, trail);
+      while (renderedChildren.firstChild) {
+        childrenBox.appendChild(renderedChildren.firstChild);
+      }
+      childrenBox.dataset.rendered = "true";
+    }
+
     childrenBox.classList.toggle("collapsed", !shouldExpand);
     toggle.textContent = shouldExpand ? "−" : "+";
     toggle.setAttribute("aria-expanded", shouldExpand ? "true" : "false");
@@ -334,33 +363,36 @@ function renderTree(items, isBalanceSheetRoot, parentTrail) {
 // ========================================
 // Expand All opens every branch; Collapse All closes every branch.
 
-function setBranchExpanded(item, expanded) {
-  const toggle = item.querySelector(".tree-toggle");
-  const childrenBox = item.querySelector(".tree-branch");
-  if (!toggle || !childrenBox) return;
-
-  childrenBox.classList.toggle("collapsed", !expanded);
-  toggle.textContent = expanded ? "−" : "+";
-  toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
-
-  const row = item.querySelector(".branch-row");
-  const label = row ? row.querySelector(".branch-label") : null;
-  toggle.setAttribute("aria-label", (expanded ? "Collapse " : "Expand ") + (label ? label.textContent : ""));
-  if (row) row.classList.toggle("expanded", expanded);
-}
-
 function expandAll() {
-  document.getElementById("tree-container").querySelectorAll(".tree-item")
-    .forEach(item => setBranchExpanded(item, true));
-  document.getElementById("supplementary-container").querySelectorAll(".tree-item")
-    .forEach(item => setBranchExpanded(item, true));
+  const containers = [
+    document.getElementById("tree-container"),
+    document.getElementById("supplementary-container")
+  ];
+
+  containers.forEach(container => {
+    let nextToggle;
+
+    // Expanding a branch adds its children, so scan again after each expansion.
+    do {
+      nextToggle = Array.from(container.querySelectorAll(".tree-toggle"))
+        .find(toggle => toggle.getAttribute("aria-expanded") !== "true");
+
+      if (nextToggle) nextToggle.click();
+    } while (nextToggle);
+  });
 }
 
 function collapseAll() {
-  document.getElementById("tree-container").querySelectorAll(".tree-item")
-    .forEach(item => setBranchExpanded(item, false));
-  document.getElementById("supplementary-container").querySelectorAll(".tree-item")
-    .forEach(item => setBranchExpanded(item, false));
+  const containers = [
+    document.getElementById("tree-container"),
+    document.getElementById("supplementary-container")
+  ];
+
+  containers.forEach(container => {
+    container.querySelectorAll(".tree-toggle").forEach(toggle => {
+      if (toggle.getAttribute("aria-expanded") === "true") toggle.click();
+    });
+  });
 }
 
 // ========================================
