@@ -9,6 +9,9 @@
 //   isSide     Optional balance-sheet styling hint: "assets" or "liabilitiesEquity".
 //
 // Add, remove or move items here, and keep their definitions in definitions.js.
+// Income statements include share counts and EPS after Net Profit.
+// balanceSheetSupplementaryItems appears only with the Balance Sheet;
+// supplementaryItems is the shared section shown under every statement.
 // The UI follows this structure, so ordinary taxonomy changes do not require
 // changes to script.js.
 
@@ -130,7 +133,11 @@ const financialData = {
       },
       { name: "Profit Before Tax", datapoint: "Profit_Before_Tax" },
       { name: "Tax", datapoint: "Income_Tax" },
-      { name: "Net Profit", datapoint: "Net_Profit" }
+      { name: "Net Profit", datapoint: "Net_Profit" },
+      { name: "Weighted Average Shares Outstanding", datapoint: "Weighted_Average_Shares_Outstanding" },
+      { name: "Diluted Weighted Average Shares Outstanding", datapoint: "Diluted_Weighted_Average_Shares_Outstanding" },
+      { name: "Earnings Per Share", datapoint: "EPS" },
+      { name: "Diluted Earnings Per Share", datapoint: "Diluted_EPS" }
     ],
     cashFlow: [
       {
@@ -248,7 +255,11 @@ const financialData = {
       },
       { name: "Profit Before Tax", datapoint: "Profit_Before_Tax" },
       { name: "Tax", datapoint: "Bank_Taxation" },
-      { name: "Net Profit", datapoint: "Net_Profit" }
+      { name: "Net Profit", datapoint: "Net_Profit" },
+      { name: "Weighted Average Shares Outstanding", datapoint: "Weighted_Average_Shares_Outstanding" },
+      { name: "Diluted Weighted Average Shares Outstanding", datapoint: "Diluted_Weighted_Average_Shares_Outstanding" },
+      { name: "Earnings Per Share", datapoint: "EPS" },
+      { name: "Diluted Earnings Per Share", datapoint: "Diluted_EPS" }
     ],
     cashFlow: [
       {
@@ -285,14 +296,13 @@ const financialData = {
     ]
   },
 
-  supplementaryItems: [
-    { name: "Earnings Per Share", datapoint: "EPS" },
-    { name: "Diluted Earnings Per Share", datapoint: "Diluted_EPS" },
-    { name: "Dividend Per Share", datapoint: "DPS" },
+  balanceSheetSupplementaryItems: [
     { name: "Book Value Per Share", datapoint: "Book_Value_Per_Share" },
-    { name: "Tangible Book Value Per Share", datapoint: "Tangible_Book_Value_Per_Share" },
-    { name: "Weighted Average Shares Outstanding", datapoint: "Weighted_Average_Shares_Outstanding" },
-    { name: "Diluted Weighted Average Shares Outstanding", datapoint: "Diluted_Weighted_Average_Shares_Outstanding" },
+    { name: "Tangible Book Value Per Share", datapoint: "Tangible_Book_Value_Per_Share" }
+  ],
+
+  supplementaryItems: [
+    { name: "Dividend Per Share", datapoint: "DPS" },
     { name: "Dividend Payout", datapoint: "Dividend_Payout" }
   ]
 };
